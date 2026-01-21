@@ -59,7 +59,7 @@ app.post('/wa', authenticateBearer, async (req, res) => {
 
         // Always ACK Meta
         if (!messages || !Array.isArray(messages)) {
-            //return res.status(200).send('EVENT_RECEIVED')
+            return res.status(200).send('EVENT_RECEIVED')
         }
 
         const messageText =
@@ -117,7 +117,7 @@ app.post('/wa', authenticateBearer, async (req, res) => {
         })
     } catch (err) {
         console.error(err)
-        return res.status(200).send('EVENT_RECEIVED')
+        return res.status(200).send(err.message)
     }
 })
 
