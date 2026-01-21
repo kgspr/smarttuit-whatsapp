@@ -113,8 +113,10 @@ app.post('/wa', authenticateBearer, async (req, res) => {
                 meeting_links += `\n\n*${meeting?.online_classes_id?.class?.name || 'Meeting'}*\n${meeting.link}`
             });
             return res.status(200).json({
-                "type": "button",
-                "body": {
+            type: "interactive",
+            interactive: {
+                type: "button",
+                body: {
                     "text": `*Zoom Online Classes*${meeting_links}` //"https://zoom.us"
                 },
                 action: {
@@ -128,7 +130,7 @@ app.post('/wa', authenticateBearer, async (req, res) => {
                         }
                     ]
                 }
-            })
+            }})
         }
 
         return res.status(200).json({
