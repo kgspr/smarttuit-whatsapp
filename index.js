@@ -51,7 +51,7 @@ const studentData = async (phone) => {
 const zoomMeetingData = async (phone) => {
     try {
         const response = await fetch(
-            `https://lms.eu1.storap.com/items/online_classes_students?filter[phone][_eq]=${encodeURIComponent(phone)}&fields=link,online_classes_id.class.name&sort=-date_created`,
+            `https://lms.eu1.storap.com/items/online_classes_students?filter[phone][_eq]=${encodeURIComponent(phone)}&fields=link,online_classes_id.class.name&sort=-id`,
             {
                 method: 'GET',
                 headers: {
