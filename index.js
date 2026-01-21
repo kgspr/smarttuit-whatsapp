@@ -33,6 +33,7 @@ const authenticateBearer = (req, res, next) => {
 app.post('/wa', authenticateBearer, async (req, res) => {
     try {
         const { to, messages } = JSON.parse(req.body)
+        if (strMessage.includes('zoom')) return res.status(200).json({messages})
         const strMessage = JSON.stringify(messages).toLowerCase()
 
         if (strMessage.includes('zoom')) return res.status(200).json({
