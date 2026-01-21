@@ -51,7 +51,7 @@ const studentData = async (phone) => {
 const zoomMeetingData = async (phone) => {
     try {
         const response = await fetch(
-            `https://lms.eu1.storap.com/items/online_classes_students?filter[phone][_eq]=${encodeURIComponent(phone)}&fields=link,online_classes_id.class.name`,
+            `https://lms.eu1.storap.com/items/online_classes_students?filter[phone][_eq]=${encodeURIComponent(phone)}&fields=link,online_classes_id.class.name&sort=-date_created`,
             {
                 method: 'GET',
                 headers: {
@@ -110,13 +110,13 @@ app.post('/wa', authenticateBearer, async (req, res) => {
             if (zoom?.data?.length == 0) return res.status(200).json(dataNotFound("You haven't zoom meetings!"));
             let meeting_links = ``
             zoom?.data?.forEach(meeting => {
-                meeting_links += `\n\n${meeting?.online_classes_id?.class?.name || 'Meeting'}\n${meeting.link}`
+                meeting_links += `\n\n*${meeting?.online_classes_id?.class?.name || 'Meeting'}*\n${meeting.link}`
             });
             return res.status(200).json({
                 "type": "text",
                 "text": {
                     "preview_url": true,
-                    "body": `*Zoom Meetings*\n${meeting_links}` //"https://zoom.us"
+                    "body": `*Zoom Meetings*${meeting_links}` //"https://zoom.us"
                 }
             })
         }
