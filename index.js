@@ -48,12 +48,39 @@ const studentData = async (phone) => {
     }
 }
 
-const studentNotFound = {
-                "type": "text",
-                "text": {
-                    "body": "Sorry, this phone number is not vaild!"
+const zoomMeetingData = async (phone) => {
+    try {
+        const response = await fetch(
+            `https://lms.eu1.storap.com/items/students?filter[phone][_eq]=${encodeURIComponent(phone)}`,
+            {
+                method: 'GET',
+                headers: {
+                    'Authorization': 'Bearer _bRSdfALKVbionFG3jFi_L4JV5e8M68s',
+                    'Content-Type': 'application/json'
                 }
             }
+        )
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch zoom data')
+        }
+
+        // Change to .text() if your flow returns text
+        return await response.json()
+    } catch (err) {
+        console.error('zoomData error:', err.message)
+        return null
+    }
+}
+
+const studentNotFound = (message) => {
+    return {
+        "type": "text",
+        "text": {
+            "body": message
+                }
+    }
+}
 
 // WhatsApp webhook
 app.post('/wa', authenticateBearer, async (req, res) => {
@@ -68,7 +95,7 @@ app.post('/wa', authenticateBearer, async (req, res) => {
 
         if (strMessage.includes('me')) {
             const student = await studentData(to);
-            if (!student?.data) return res.status(200).json(studentNotFound);
+            if (!student?.data) return res.status(200).json(studentNotFound("Sorry, this phone number is not vaild!"));
             return res.status(200).json({
                 "type": "text",
                 "text": {
@@ -79,6 +106,8 @@ app.post('/wa', authenticateBearer, async (req, res) => {
         }
 
         if (strMessage.includes('zoom')) {
+            const zoom = await zoomMeetingData(to);
+            if (!zoom?.data) return res.status(200).json(studentNotFound("You haven't zoom meetings!"));
             return res.status(200).json({
                 "type": "text",
                 "text": {
