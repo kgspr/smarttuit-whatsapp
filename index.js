@@ -51,7 +51,7 @@ const studentData = async (phone) => {
 const zoomMeetingData = async (phone) => {
     try {
         const response = await fetch(
-            `https://lms.eu1.storap.com/items/students?filter[phone][_eq]=${encodeURIComponent(phone)}`,
+            `https://lms.eu1.storap.com/items/online_classes_students?filter[phone][_eq]=${encodeURIComponent(phone)}`,
             {
                 method: 'GET',
                 headers: {
@@ -73,12 +73,12 @@ const zoomMeetingData = async (phone) => {
     }
 }
 
-const studentNotFound = (message) => {
+const dataNotFound = (message) => {
     return {
         "type": "text",
         "text": {
             "body": message
-                }
+        }
     }
 }
 
@@ -95,7 +95,7 @@ app.post('/wa', authenticateBearer, async (req, res) => {
 
         if (strMessage.includes('me')) {
             const student = await studentData(to);
-            if (!student?.data) return res.status(200).json(studentNotFound("Sorry, this phone number is not vaild!"));
+            if (!student?.data) return res.status(200).json(dataNotFound("Sorry, this phone number is not vaild!"));
             return res.status(200).json({
                 "type": "text",
                 "text": {
@@ -107,7 +107,7 @@ app.post('/wa', authenticateBearer, async (req, res) => {
 
         if (strMessage.includes('zoom')) {
             const zoom = await zoomMeetingData(to);
-            if (zoom?.data?.length == 0) return res.status(200).json(studentNotFound("You haven't zoom meetings!"));
+            if (zoom?.data?.length == 0) return res.status(200).json(dataNotFound("You haven't zoom meetings!"));
             return res.status(200).json({
                 "type": "text",
                 "text": {
@@ -129,14 +129,14 @@ app.post('/wa', authenticateBearer, async (req, res) => {
                         {
                             type: "reply",
                             reply: {
-                                id: "btn_option_2",
+                                id: "zoom",
                                 title: "Option 2"
                             }
                         },
                         {
                             type: "reply",
                             reply: {
-                                id: "btn_option_3",
+                                id: "me",
                                 title: "Option 3"
                             }
                         }
