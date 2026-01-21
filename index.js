@@ -32,6 +32,7 @@ const authenticateBearer = (req, res, next) => {
 // WhatsApp webhook response
 app.post('/wa', authenticateBearer, async (req, res) => {
     try {
+        return res.status(200).json(req.body)
         const { to, message } = req.body
 
         if(message.toLowerCase().includes('zoom')) return res.status(200).json({
