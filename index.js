@@ -29,20 +29,30 @@ const authenticateBearer = (req, res, next) => {
     next()
 }
 
-// WhatsApp webhook response
+// WhatsApp webhook
 app.post('/wa', authenticateBearer, async (req, res) => {
     try {
-        const { to, messages } = JSON.parse(req.body)
-        return res.status(200).json({messages})
+        const { messages } = req.body || {}
+
+        if (!messages || !Array.isArray(messages)) {
+            return res.status(200).send('EVENT_RECEIVED')
+        }
+
         const strMessage = JSON.stringify(messages).toLowerCase()
 
-        if (strMessage.includes('zoom')) return res.status(200).json({
+        // ⚠️ Webhook should only ACKNOWLEDGE
+        // Actual replies must be sent via WhatsApp Cloud API
+        if (strMessage.includes('zoom')) {
+            return res.status(200).json({
             "type": "text",
             "text": {
                 "preview_url": true,
                 "body": "https://zoom.us"
             }
         })
+        } else {
+            console.log('Show interactive buttons')
+        }
 
         return res.status(200).json({
             type: "interactive",
@@ -71,6 +81,7 @@ app.post('/wa', authenticateBearer, async (req, res) => {
                 }
             }
         })
+
     } catch (err) {
         console.error(err)
         return res.status(500).json({
