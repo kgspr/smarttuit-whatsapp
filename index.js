@@ -100,7 +100,7 @@ app.post('/wa', authenticateBearer, async (req, res) => {
                 "type": "text",
                 "text": {
                     "preview_url": true,
-                    "body": student?.data?.student?.name || ''
+                    "body": `*${student?.data?.student?.name || ''}*\nPhone - ${student?.data?.student?.phone || ''}`
                 }
             })
         }
@@ -126,7 +126,7 @@ app.post('/wa', authenticateBearer, async (req, res) => {
             interactive: {
                 type: "button",
                 body: {
-                    text: "*Welcome to Student Portal*\n\nWhat you want to do?\nඔබට අවශ්‍ය දේ පහති​න් තෝරන්​න\n\n_Powered by SmartTuit®_\n📝 Hi! Select what you want to do?"
+                    text: "👋 Hi!\n*Welcome to Student Portal*\n\n📝 What do you want to do?\nඔබට අවශ්‍ය දේ පහති​න් තෝරන්​න\n\n_Powered by SmartTuit®_\n"
                 },
                 action: {
                     buttons: [
