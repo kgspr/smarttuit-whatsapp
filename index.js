@@ -41,7 +41,7 @@ const studentData = async (phone) => {
         }
 
         // Change to .text() if your flow returns text
-        return await response.json()
+        return await response.json()?.data || null
     } catch (err) {
         console.error('studentData error:', err.message)
         return null
