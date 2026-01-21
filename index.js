@@ -1,6 +1,5 @@
 import express from 'express'
 import dotenv from 'dotenv'
-import fetch from 'node-fetch'
 
 dotenv.config()
 
@@ -52,23 +51,16 @@ const studentData = async (phone) => {
 // WhatsApp webhook
 app.post('/wa', authenticateBearer, async (req, res) => {
     try {
-        const entry = req.body?.entry?.[0]
-        const change = entry?.changes?.[0]
-        const value = change?.value
-        const messages = value?.messages
+        const { to, messages } = req.body || {}
 
-        // Always ACK Meta
         if (!messages || !Array.isArray(messages)) {
             return res.status(200).send('EVENT_RECEIVED')
         }
 
-        const messageText =
-            messages[0]?.text?.body?.toLowerCase() || ''
+        const strMessage = JSON.stringify(messages).toLowerCase()
 
-        const from = messages[0]?.from
-
-        if (messageText.includes('me')) {
-            const student = await studentData(from)
+        if (strMessage.includes('me')) {
+            const student = await studentData(to)
             return res.status(200).json({
                 "type": "text",
                 "text": {
@@ -78,7 +70,7 @@ app.post('/wa', authenticateBearer, async (req, res) => {
             })
         }
 
-        if (messageText.includes('zoom')) {
+        if (strMessage.includes('zoom')) {
             return res.status(200).json({
                 "type": "text",
                 "text": {
@@ -115,9 +107,13 @@ app.post('/wa', authenticateBearer, async (req, res) => {
                 }
             }
         })
+
     } catch (err) {
         console.error(err)
-        return res.status(200).send(err.message)
+        return res.status(500).json({
+            success: false,
+            error: err.message
+        })
     }
 })
 
