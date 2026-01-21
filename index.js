@@ -108,7 +108,7 @@ app.post('/wa', authenticateBearer, async (req, res) => {
                             {
                                 type: "reply",
                                 reply: {
-                                    id: "cmd_menu",
+                                    id: "cmd_main_menu",
                                     title: "Main Menu"
                                 }
                             }
@@ -137,7 +137,7 @@ app.post('/wa', authenticateBearer, async (req, res) => {
                             {
                                 type: "reply",
                                 reply: {
-                                    id: "cmd_menu",
+                                    id: "cmd_main_menu",
                                     title: "Main Menu"
                                 }
                             }
