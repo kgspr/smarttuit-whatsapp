@@ -69,14 +69,52 @@ app.post('/wa', authenticateBearer, async (req, res) => {
 
         if (messageText.includes('me')) {
             const student = await studentData(from)
-            console.log('Student:', student)
+            return res.status(200).json({
+                "type": "text",
+                "text": {
+                    "preview_url": true,
+                    "body": student
+                }
+            })
         }
 
         if (messageText.includes('zoom')) {
-            console.log('Send Zoom link')
+            return res.status(200).json({
+                "type": "text",
+                "text": {
+                    "preview_url": true,
+                    "body": "https://zoom.us"
+                }
+            })
         }
 
-        console.log('Incoming message:', messageText)
+        return res.status(200).json({
+            type: "interactive",
+            interactive: {
+                type: "button",
+                body: {
+                    text: "📝 Please choose one option below:"
+                },
+                action: {
+                    buttons: [
+                        {
+                            type: "reply",
+                            reply: {
+                                id: "btn_option_2",
+                                title: "Option 2"
+                            }
+                        },
+                        {
+                            type: "reply",
+                            reply: {
+                                id: "btn_option_3",
+                                title: "Option 3"
+                            }
+                        }
+                    ]
+                }
+            }
+        })
 
         return res.status(200).send('EVENT_RECEIVED')
     } catch (err) {
