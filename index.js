@@ -41,7 +41,7 @@ const studentData = async (phone) => {
         }
 
         // Change to .text() if your flow returns text
-        return await response.json()?.data || null
+        return await response.json()
     } catch (err) {
         console.error('studentData error:', err.message)
         return null
@@ -65,7 +65,7 @@ app.post('/wa', authenticateBearer, async (req, res) => {
                 "type": "text",
                 "text": {
                     "preview_url": true,
-                    "body": student?.name || ''
+                    "body": student?.data?.name || ''
                 }
             })
         }
