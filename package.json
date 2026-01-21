@@ -1,7 +1,7 @@
 {
-  "name": "jaspers-market",
+  "name": "smarttuit-whatsapp",
   "version": "1.0.0",
-  "description": "Sample Whatsapp App - Jasper's Market",
+  "description": "SmartTuit WhatsApp Client",
   "keywords": [
     "whatsapp",
     "webhook"
