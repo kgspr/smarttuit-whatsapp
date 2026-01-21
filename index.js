@@ -91,21 +91,34 @@ app.post('/wa', authenticateBearer, async (req, res) => {
             return res.status(200).send('EVENT_RECEIVED')
         }
 
-        const strMessage = JSON.stringify(messages?.[0]?.text?.body || messages?.[0]?.interactive?.button_reply?.id ).toLowerCase()
+        const strMessage = JSON.stringify(messages?.[0]?.text?.body || messages?.[0]?.interactive?.button_reply?.id).toLowerCase()
 
-        if (strMessage.includes('me')) {
+        if (strMessage.includes('cmd_me')) {
             const student = await studentData(to);
             if (!student?.data) return res.status(200).json(dataNotFound("Sorry, this phone number is not vaild!"));
             return res.status(200).json({
-                "type": "text",
-                "text": {
-                    "preview_url": true,
-                    "body": `*${student?.data?.student?.name || ''}*\nPhone - ${student?.data?.student?.phone || ''}`
+                type: "interactive",
+                interactive: {
+                    type: "button",
+                    body: {
+                    "text": `*${student?.data?.student?.name || ''}*\nPhone - ${student?.data?.student?.phone || ''}`
+                    },
+                    action: {
+                        buttons: [
+                            {
+                                type: "reply",
+                                reply: {
+                                    id: "cmd_menu",
+                                    title: "Main Menu"
+                                }
+                            }
+                        ]
+                    }
                 }
             })
         }
 
-        if (strMessage.includes('zoom')) {
+        if (strMessage.includes('cmd_zoom')) {
             const zoom = await zoomMeetingData(to);
             if (zoom?.data?.length == 0) return res.status(200).json(dataNotFound("You haven't zoom meetings!"));
             let meeting_links = ``
@@ -113,24 +126,25 @@ app.post('/wa', authenticateBearer, async (req, res) => {
                 meeting_links += `\n\n*${meeting?.online_classes_id?.class?.name || 'Meeting'}*\n${meeting.link}`
             });
             return res.status(200).json({
-            type: "interactive",
-            interactive: {
-                type: "button",
-                body: {
-                    "text": `*Zoom Online Classes*${meeting_links}` //"https://zoom.us"
-                },
-                action: {
-                    buttons: [
-                        {
-                            type: "reply",
-                            reply: {
-                                id: "menu",
-                                title: "Main Menu"
+                type: "interactive",
+                interactive: {
+                    type: "button",
+                    body: {
+                        "text": `*Zoom Online Classes*${meeting_links}` //"https://zoom.us"
+                    },
+                    action: {
+                        buttons: [
+                            {
+                                type: "reply",
+                                reply: {
+                                    id: "cmd_menu",
+                                    title: "Main Menu"
+                                }
                             }
-                        }
-                    ]
+                        ]
+                    }
                 }
-            }})
+            })
         }
 
         return res.status(200).json({
@@ -145,14 +159,14 @@ app.post('/wa', authenticateBearer, async (req, res) => {
                         {
                             type: "reply",
                             reply: {
-                                id: "zoom",
+                                id: "cmd_zoom",
                                 title: "Join Online Class"
                             }
                         },
                         {
                             type: "reply",
                             reply: {
-                                id: "me",
+                                id: "cmd_me",
                                 title: "About Me"
                             }
                         }
