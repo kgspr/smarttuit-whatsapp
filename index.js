@@ -107,12 +107,12 @@ app.post('/wa', authenticateBearer, async (req, res) => {
 
         if (strMessage.includes('zoom')) {
             const zoom = await zoomMeetingData(to);
-            if (!zoom?.data) return res.status(200).json(studentNotFound("You haven't zoom meetings!"));
+            if (zoom?.data?.length == 0) return res.status(200).json(studentNotFound("You haven't zoom meetings!"));
             return res.status(200).json({
                 "type": "text",
                 "text": {
                     "preview_url": true,
-                    "body": zoom
+                    "body": "https://zoom.us"
                 }
             })
         }
