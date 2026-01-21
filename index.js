@@ -52,7 +52,7 @@ app.post('/wa', authenticateBearer, async (req, res) => {
                 "type": "text",
                 "text": {
                     "preview_url": true,
-                    "body": student?.student?.name || ''
+                    "body": student
                 }
             })
         }
