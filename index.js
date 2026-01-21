@@ -134,7 +134,7 @@ app.post('/wa', authenticateBearer, async (req, res) => {
                             type: "reply",
                             reply: {
                                 id: "zoom",
-                                title: "Join Zoom Online Class"
+                                title: "Join Online Class"
                             }
                         },
                         {
