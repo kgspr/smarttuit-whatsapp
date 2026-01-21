@@ -1,32 +1,17 @@
 {
   "name": "smarttuit-whatsapp",
   "version": "1.0.0",
-  "description": "SmartTuit WhatsApp Client",
-  "keywords": [
-    "whatsapp",
-    "webhook"
-  ],
-  "homepage": "https://github.com/fbsamples/whatsapp-business-jaspers-market#readme",
-  "bugs": {
-    "url": "https://github.com/fbsamples/whatsapp-business-jaspers-market/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/fbsamples/whatsapp-business-jaspers-market.git"
-  },
-  "license": "BSD",
-  "author": "Meta",
-  "type": "commonjs",
-  "main": "app.js",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
   "scripts": {
-    "start": "node app.js",
-    "test": "echo no tests yet!"
+    "start": "node index.js"
   },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
   "dependencies": {
-    "body-parser": "^1.20.2",
-    "dotenv": "^16.0.3",
-    "express": "^4.18.2",
-    "facebook-nodejs-business-sdk": "^23.0.1",
-    "redis": "^5.8.2"
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1"
   }
 }
