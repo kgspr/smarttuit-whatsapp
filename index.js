@@ -68,7 +68,7 @@ app.post('/wa', authenticateBearer, async (req, res) => {
 
         if (strMessage.includes('me')) {
             const student = await studentData(to);
-            if (!student) return res.status(200).json(studentNotFound);
+            if (!student?.data) return res.status(200).json(studentNotFound);
             return res.status(200).json({
                 "type": "text",
                 "text": {
