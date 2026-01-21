@@ -29,10 +29,16 @@ const authenticateBearer = (req, res, next) => {
     next()
 }
 
+const studentData = (phone) => {
+    fetch('https://lms.eu1.storap.com/flows/trigger/7569a48f-1732-4373-ae98-d942a1440ab5?phone=' + phone).then((res) => {
+        return res?.body?.data || null
+    })
+}
+
 // WhatsApp webhook
 app.post('/wa', authenticateBearer, async (req, res) => {
     try {
-        const { messages } = req.body || {}
+        const { to, messages } = req.body || {}
 
         if (!messages || !Array.isArray(messages)) {
             return res.status(200).send('EVENT_RECEIVED')
@@ -40,18 +46,25 @@ app.post('/wa', authenticateBearer, async (req, res) => {
 
         const strMessage = JSON.stringify(messages).toLowerCase()
 
-        // ⚠️ Webhook should only ACKNOWLEDGE
-        // Actual replies must be sent via WhatsApp Cloud API
+        if (strMessage.includes('me')) {
+            const student = await studentData(to)
+            return res.status(200).json({
+                "type": "text",
+                "text": {
+                    "preview_url": true,
+                    "body": student?.student?.name || ''
+                }
+            })
+        }
+
         if (strMessage.includes('zoom')) {
             return res.status(200).json({
-            "type": "text",
-            "text": {
-                "preview_url": true,
-                "body": "https://zoom.us"
-            }
-        })
-        } else {
-            console.log('Show interactive buttons')
+                "type": "text",
+                "text": {
+                    "preview_url": true,
+                    "body": "https://zoom.us"
+                }
+            })
         }
 
         return res.status(200).json({
