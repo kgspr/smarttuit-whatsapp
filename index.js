@@ -126,7 +126,7 @@ app.post('/wa', authenticateBearer, async (req, res) => {
             interactive: {
                 type: "button",
                 body: {
-                    text: "📝 Please choose one option below:"
+                    text: "📝 Hi! Select what you want to do?"
                 },
                 action: {
                     buttons: [
@@ -134,14 +134,14 @@ app.post('/wa', authenticateBearer, async (req, res) => {
                             type: "reply",
                             reply: {
                                 id: "zoom",
-                                title: "Option 2"
+                                title: "Join Zoom Online Class"
                             }
                         },
                         {
                             type: "reply",
                             reply: {
                                 id: "me",
-                                title: "Option 3"
+                                title: "About Me"
                             }
                         }
                     ]
