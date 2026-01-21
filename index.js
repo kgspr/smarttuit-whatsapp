@@ -64,7 +64,7 @@ app.post('/wa', authenticateBearer, async (req, res) => {
             return res.status(200).send('EVENT_RECEIVED')
         }
 
-        const strMessage = JSON.stringify(messages).toLowerCase()
+        const strMessage = JSON.stringify(messages?.[0]?.text?.body).toLowerCase()
 
         if (strMessage.includes('me')) {
             const student = await studentData(to);
