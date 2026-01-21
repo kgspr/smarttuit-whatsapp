@@ -48,6 +48,13 @@ const studentData = async (phone) => {
     }
 }
 
+const studentNotFound = {
+                "type": "text",
+                "text": {
+                    "body": "Sorry, this phone number is not vaild!"
+                }
+            }
+
 // WhatsApp webhook
 app.post('/wa', authenticateBearer, async (req, res) => {
     try {
@@ -60,7 +67,8 @@ app.post('/wa', authenticateBearer, async (req, res) => {
         const strMessage = JSON.stringify(messages).toLowerCase()
 
         if (strMessage.includes('me')) {
-            const student = await studentData(to); if (!student) return res.status(400);
+            const student = await studentData(to);
+            if (!student) return res.status(200).json(studentNotFound);
             return res.status(200).json({
                 "type": "text",
                 "text": {
