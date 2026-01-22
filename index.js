@@ -152,7 +152,7 @@ app.post('/wa', authenticateBearer, async (req, res) => {
             interactive: {
                 type: "button",
                 body: {
-                    text: "👋 Hi!\n*Welcome to Student Portal*\n\n📝 What do you want to do?\nඔබට අවශ්‍ය දේ පහති​න් තෝරන්​න\n\n_Powered by SmartTuit®_\n"
+                    text: "👋 Hello!\n*Welcome to the Student Portal 😊*\n\n📝 Please choose an option below\nඔබට අවශ්‍ය දේ පහතින් තෝරන්න 👇\n\n_Powered by SmartTuit®_\n"
                 },
                 action: {
                     buttons: [
