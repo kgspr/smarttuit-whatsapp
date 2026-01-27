@@ -105,22 +105,23 @@ app.post('/wa', authenticateBearer, async (req, res) => {
                     },
                     action: {
                         buttons: [
-                            {
-                                type: "reply",
-                                reply: {
-                                    id: "cmd_main_menu",
-                                    title: "Main Menu"
-                                }
-                            },
-                            ...student.forEach((account) => {
-                                return {
-                                    type: "reply",
-                                    reply: {
-                                        id: "cmd_main_menu",
-                                        title: "Main Menu"
-                                    }
-                                }
-                            })
+                    // dynamic student buttons
+                    ...students.map((account) => ({
+                        type: "reply",
+                        reply: {
+                            id: `cmd_student_${account.id}`, // unique id
+                            title: account.name || "Student"
+                        }
+                    })),
+
+                    // static main menu button
+                    {
+                        type: "reply",
+                        reply: {
+                            id: "cmd_main_menu",
+                            title: "Main Menu"
+                        }
+                    }
                         ]
                     }
                 }
