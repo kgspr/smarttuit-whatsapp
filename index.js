@@ -93,87 +93,127 @@ app.post('/wa', authenticateBearer, async (req, res) => {
 
         const strMessage = JSON.stringify(messages?.[0]?.text?.body || messages?.[0]?.interactive?.button_reply?.id).toLowerCase()
 
-if (strMessage.includes('cmd_pay_fees')) {
-    const students = await studentData(to)
+        if (strMessage.includes('cmd_pay_account_student_')) {
+            const data = strMessage.replace('cmd_pay_account_student_', '')
+            const students = await studentData(to, accountId)
 
-    if (!students || !students.length) {
-        return res
-            .status(200)
-            .json(dataNotFound("Sorry, this phone number is not valid!"))
-    }
-
-    const uniqueAccounts = [
-        ...new Map(
-            students.map(s => [s.account.id, s.account])
-        ).values()
-    ]
-
-    return res.status(200).json({
-        type: "interactive",
-        interactive: {
-            type: "button",
-            body: {
-                text: "Select"
-            },
-            action: {
-                buttons: [
-                    ...uniqueAccounts.map(account => ({
-                        type: "reply",
-                        reply: {
-                            id: `cmd_pay_account_${account.id}`,
-                            title: account.name
-                        }
-                    })),
-                    {
-                        type: "reply",
-                        reply: {
-                            id: "cmd_main_menu",
-                            title: "Main Menu"
-                        }
-                    }
-                ]
+            if (!students || !students.length) {
+                return res
+                    .status(200)
+                    .json(dataNotFound("Sorry, this phone number is not valid!"))
             }
-        }
-    })
-}
 
-if (strMessage.includes('cmd_pay_account')) {
-    const students = await studentData(to, strMessage.replace('cmd_pay_account_', ''))
-
-    if (!students || !students.length) {
-        return res
-            .status(200)
-            .json(dataNotFound("Sorry, this phone number is not valid!"))
-    }
-
-    return res.status(200).json({
-        type: "interactive",
-        interactive: {
-            type: "button",
-            body: {
-                text: "Select"
-            },
-            action: {
-                buttons: [
-                    ...students.map(account => ({
-                        type: "reply",
-                        reply: {
-                            id: `cmd_account_${account.id}`,
-                            title: account.name
-                        }
-                    })),
-                    {
-                        type: "reply",
-                        reply: {
-                            id: "cmd_main_menu",
-                            title: "Main Menu"
-                        }
+            return res.status(200).json({
+                type: "interactive",
+                interactive: {
+                    type: "button",
+                    body: {
+                        text: "Select"
+                    },
+                    action: {
+                        buttons: [
+                            ...students.map(student => ({
+                                type: "reply",
+                                reply: {
+                                    id: `cmd_pay_account_student_${accountId}_${student.student_id}`,
+                                    title: student.name
+                                }
+                            })),
+                            {
+                                type: "reply",
+                                reply: {
+                                    id: "cmd_main_menu",
+                                    title: "Main Menu"
+                                }
+                            }
+                        ]
                     }
-                ]
-            }
+                }
+            })
         }
-    })
-}
+
+        if (strMessage.includes('cmd_pay_account_')) {
+            const accountId = strMessage.replace('cmd_pay_account_', '')
+            const students = await studentData(to, accountId)
+
+            if (!students || !students.length) {
+                return res
+                    .status(200)
+                    .json(dataNotFound("Sorry, this phone number is not valid!"))
+            }
+
+            return res.status(200).json({
+                type: "interactive",
+                interactive: {
+                    type: "button",
+                    body: {
+                        text: "Select"
+                    },
+                    action: {
+                        buttons: [
+                            ...students.map(student => ({
+                                type: "reply",
+                                reply: {
+                                    id: `cmd_pay_account_student_${accountId}_${student.student_id}`,
+                                    title: student.name
+                                }
+                            })),
+                            {
+                                type: "reply",
+                                reply: {
+                                    id: "cmd_main_menu",
+                                    title: "Main Menu"
+                                }
+                            }
+                        ]
+                    }
+                }
+            })
+        }
+
+        if (strMessage.includes('cmd_pay_fees')) {
+            const students = await studentData(to)
+
+            if (!students || !students.length) {
+                return res
+                    .status(200)
+                    .json(dataNotFound("Sorry, this phone number is not valid!"))
+            }
+
+            const uniqueAccounts = [
+                ...new Map(
+                    students.map(s => [s.account.id, s.account])
+                ).values()
+            ]
+
+            return res.status(200).json({
+                type: "interactive",
+                interactive: {
+                    type: "button",
+                    body: {
+                        text: "Select"
+                    },
+                    action: {
+                        buttons: [
+                            ...uniqueAccounts.map(account => ({
+                                type: "reply",
+                                reply: {
+                                    id: `cmd_pay_account_${account.id}`,
+                                    title: account.name
+                                }
+                            })),
+                            {
+                                type: "reply",
+                                reply: {
+                                    id: "cmd_main_menu",
+                                    title: "Main Menu"
+                                }
+                            }
+                        ]
+                    }
+                }
+            })
+        }
 
         if (strMessage.includes('cmd_zoom')) {
             const zoom = await zoomMeetingData(to);
