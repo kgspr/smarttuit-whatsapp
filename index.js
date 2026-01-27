@@ -117,7 +117,7 @@ app.post('/wa', authenticateBearer, async (req, res) => {
             const studentId = data.split('_')[1]
             const student = await studentData(to, accountId, studentId)
 
-            if (!student || !student.student) {
+            if (!student || !student.id) {
                 return res
                     .status(200)
                     .json(dataNotFound("Sorry, this phone number is not valid!"))
@@ -128,7 +128,7 @@ app.post('/wa', authenticateBearer, async (req, res) => {
                 interactive: {
                     type: "button",
                     body: {
-                        text: `app.smarttuit.com/${student?.student?.data?.student?.student_id}?token=${JSON.stringify(student)}`
+                        text: `app.smarttuit.com/${student?.student_id}`
                     },
                     action: {
                         buttons: [
