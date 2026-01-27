@@ -95,11 +95,10 @@ app.post('/wa', authenticateBearer, async (req, res) => {
 
         if (strMessage.includes('cmd_pay_account_student_')) {
 
-            if (!students || !students.length) {
                 return res
                     .status(200)
                     .json(dataNotFound(strMessage))
-            }
+                    
             const data = strMessage.replace('cmd_pay_account_student_', '')
             const accountId = data.split('_')[0]
             const studentId = data.split('_')[1]
