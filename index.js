@@ -117,7 +117,7 @@ app.post('/wa', authenticateBearer, async (req, res) => {
             const studentId = data.split('_')[1]
             const student = await studentData(to, accountId, studentId)
 
-            if (!student || !student.data) {
+            if (!student || !student.student) {
                 return res
                     .status(200)
                     .json(dataNotFound("Sorry, this phone number is not valid!"))
@@ -128,7 +128,7 @@ app.post('/wa', authenticateBearer, async (req, res) => {
                 interactive: {
                     type: "button",
                     body: {
-                        text: `pay.storap.com/${student.data?.student?.name}`
+                        text: `pay.storap.com/${student?.student?.data?.student?.name}`
                     },
                     action: {
                         buttons: [
