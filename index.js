@@ -33,7 +33,7 @@ const authenticateBearer = (req, res, next) => {
 const studentData = async (phone, account = null, student_id = null) => {
     try {
         const response = await fetch(
-            `https://lms.eu1.storap.com/flows/trigger/7569a48f-1732-4373-ae98-d942a1440ab5?phone=${phone}${account ? `&account=${account.replaceAll('\"', '')}` : ''}${student_id ? `&student_id=${student_id.replaceAll('\"', '')}` : ''}`
+            `https://lms.eu1.storap.com/flows/trigger/7569a48f-1732-4373-ae98-d942a1440ab5?phone=${phone}${account ? `&account=${account}` : ''}${student_id ? `&student_id=${student_id}` : ''}`
         )
 
         if (!response.ok) {
@@ -91,7 +91,11 @@ app.post('/wa', authenticateBearer, async (req, res) => {
             return res.status(200).send('EVENT_RECEIVED')
         }
 
-        const strMessage = JSON.stringify(messages?.[0]?.text?.body || messages?.[0]?.interactive?.button_reply?.id).toLowerCase()
+const strMessage = (
+    messages?.[0]?.text?.body ||
+    messages?.[0]?.interactive?.button_reply?.id ||
+    ''
+).toLowerCase()
 
         if (strMessage.includes('cmd_pay_account_student_')) {
 
@@ -140,7 +144,7 @@ app.post('/wa', authenticateBearer, async (req, res) => {
         }
 
         if (strMessage.includes('cmd_pay_account_')) {
-            const accountId = strMessage.replace('cmd_pay_account_', '').replaceAll('\\"', '')
+            const accountId = strMessage.replace('cmd_pay_account_', '')
             const students = await studentData(to, accountId)
 
             if (!students || !students.length) {
@@ -161,7 +165,7 @@ app.post('/wa', authenticateBearer, async (req, res) => {
                             ...students.map(student => ({
                                 type: "reply",
                                 reply: {
-                                    id: `cmd_pay_account_student_${accountId}_${student.student_id.replaceAll('\\"', '')}`,
+                                    id: `cmd_pay_account_student_${accountId}_${student.student_id}`,
                                     title: student.name
                                 }
                             })),
@@ -205,7 +209,7 @@ app.post('/wa', authenticateBearer, async (req, res) => {
                             ...uniqueAccounts.map(account => ({
                                 type: "reply",
                                 reply: {
-                                    id: `cmd_pay_account_${account.id.replaceAll('\\"', '')}`,
+                                    id: `cmd_pay_account_${account.id}`,
                                     title: account.name
                                 }
                             })),
