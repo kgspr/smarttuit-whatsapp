@@ -101,9 +101,9 @@ app.post('/wa', authenticateBearer, async (req, res) => {
             const data = strMessage.replace('cmd_pay_account_student_', '')
             const accountId = data.split('_')[0]
             const studentId = data.split('_')[1]
-            const students = await studentData(to, accountId, studentId)
+            const student = await studentData(to, accountId, studentId)
 
-            if (!students || !students.data) {
+            if (!student || !student.data) {
                 return res
                     .status(200)
                     .json(dataNotFound("Sorry, this phone number is not valid!"))
@@ -118,7 +118,7 @@ app.post('/wa', authenticateBearer, async (req, res) => {
                     },
                     action: {
                         buttons: [
-                            ...students.map(student => ({
+                            ...student.map(student => ({
                                 type: "reply",
                                 reply: {
                                     id: `cmd_pay_account_student_${accountId}_${student.student_id}`,
