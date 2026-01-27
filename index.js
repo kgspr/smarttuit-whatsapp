@@ -114,17 +114,10 @@ app.post('/wa', authenticateBearer, async (req, res) => {
                 interactive: {
                     type: "button",
                     body: {
-                        text: "Select"
+                        text: `pay.storap.com/${student.data?.student?.name}`
                     },
                     action: {
                         buttons: [
-                            ...student.map(student => ({
-                                type: "reply",
-                                reply: {
-                                    id: `cmd_pay_account_student_${accountId}_${student.student_id}`,
-                                    title: student.name
-                                }
-                            })),
                             {
                                 type: "reply",
                                 reply: {
