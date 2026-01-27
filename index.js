@@ -128,7 +128,7 @@ app.post('/wa', authenticateBearer, async (req, res) => {
                 interactive: {
                     type: "button",
                     body: {
-                        text: `app.smarttuit.com/${student?.token}`
+                        text: `app.smarttuit.com/${student?.student_id}?token=${student?.token}`
                     },
                     action: {
                         buttons: [
