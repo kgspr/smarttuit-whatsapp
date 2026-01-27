@@ -75,11 +75,25 @@ const zoomMeetingData = async (phone) => {
 
 const dataNotFound = (message) => {
     return {
-        "type": "text",
-        "text": {
-            "body": message
-        }
-    }
+                type: "interactive",
+                interactive: {
+                    type: "button",
+                    body: {
+                        "text": message //"https://zoom.us"
+                    },
+                    action: {
+                        buttons: [
+                            {
+                                type: "reply",
+                                reply: {
+                                    id: "cmd_main_menu",
+                                    title: "🏠 Main Menu"
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
 }
 
 // WhatsApp webhook
