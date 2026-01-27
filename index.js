@@ -101,7 +101,7 @@ app.post('/wa', authenticateBearer, async (req, res) => {
                 interactive: {
                     type: "button",
                     body: {
-                    "text": `*${student?.data?.student?.name || ''}*\nPhone - ${student?.data?.student?.phone || ''}`
+                        "text": 'Select',//`*${student?.data?.student?.name || ''}* (${student?.data?.student?.student_id || ''})`
                     },
                     action: {
                         buttons: [
@@ -111,7 +111,16 @@ app.post('/wa', authenticateBearer, async (req, res) => {
                                     id: "cmd_main_menu",
                                     title: "Main Menu"
                                 }
-                            }
+                            },
+                            ...student.forEach((account) => {
+                                return {
+                                    type: "reply",
+                                    reply: {
+                                        id: "cmd_main_menu",
+                                        title: "Main Menu"
+                                    }
+                                }
+                            })
                         ]
                     }
                 }
