@@ -94,17 +94,23 @@ app.post('/wa', authenticateBearer, async (req, res) => {
         const strMessage = JSON.stringify(messages?.[0]?.text?.body || messages?.[0]?.interactive?.button_reply?.id).toLowerCase()
 
         if (strMessage.includes('cmd_me')) {
-            const student = await studentData(to);
-            if (!student?.length) return res.status(200).json(dataNotFound("Sorry, this phone number is not vaild!"));
-            return res.status(200).json({
-                type: "interactive",
-                interactive: {
-                    type: "button",
-                    body: {
-                        "text": 'Select',//`*${student?.data?.student?.name || ''}* (${student?.data?.student?.student_id || ''})`
-                    },
-                    action: {
-                        buttons: [
+    const students = await studentData(to)
+
+    if (!students || !students.length) {
+        return res
+            .status(200)
+            .json(dataNotFound("Sorry, this phone number is not valid!"))
+    }
+
+    return res.status(200).json({
+        type: "interactive",
+        interactive: {
+            type: "button",
+            body: {
+                text: "Select"
+            },
+            action: {
+                buttons: [
                     // dynamic student buttons
                     ...students.map((account) => ({
                         type: "reply",
@@ -122,11 +128,11 @@ app.post('/wa', authenticateBearer, async (req, res) => {
                             title: "Main Menu"
                         }
                     }
-                        ]
-                    }
-                }
-            })
+                ]
+            }
         }
+    })
+}
 
         if (strMessage.includes('cmd_zoom')) {
             const zoom = await zoomMeetingData(to);
