@@ -93,7 +93,7 @@ app.post('/wa', authenticateBearer, async (req, res) => {
 
         const strMessage = JSON.stringify(messages?.[0]?.text?.body || messages?.[0]?.interactive?.button_reply?.id).toLowerCase()
 
-if (strMessage.includes('cmd_pay')) {
+if (strMessage.includes('cmd_pay_fees')) {
     const students = await studentData(to)
 
     if (!students || !students.length) {
@@ -223,7 +223,7 @@ if (strMessage.includes('cmd_pay_account')) {
                         {
                             type: "reply",
                             reply: {
-                                id: "cmd_pay",
+                                id: "cmd_pay_fees",
                                 title: "💵 Pay Class Fees"
                             }
                         }
