@@ -33,7 +33,7 @@ const authenticateBearer = (req, res, next) => {
 const studentData = async (phone, account = null) => {
     try {
         const response = await fetch(
-            `https://lms.eu1.storap.com/flows/trigger/7569a48f-1732-4373-ae98-d942a1440ab5?phone=${phone}${account ? `&account=${account}` : ''}`
+            `https://lms.eu1.storap.com/flows/trigger/7569a48f-1732-4373-ae98-d942a1440ab5?phone=${phone}${account ? `&account=${account.replace('\"', '')}` : ''}`
         )
 
         if (!response.ok) {
