@@ -115,8 +115,8 @@ app.post('/wa', authenticateBearer, async (req, res) => {
                     ...students.map((student) => ({
                         type: "reply",
                         reply: {
-                            id: `cmd_student_${student.account.id}_${student.student_id}`, // unique id
-                            title: student.account.name
+                            id: `cmd_account_${student.account.id}`,
+                            title: `${student.account.name}`
                         }
                     })),
 
