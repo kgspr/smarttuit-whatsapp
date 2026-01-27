@@ -93,7 +93,7 @@ app.post('/wa', authenticateBearer, async (req, res) => {
 
         const strMessage = JSON.stringify(messages?.[0]?.text?.body || messages?.[0]?.interactive?.button_reply?.id).toLowerCase()
 
-        if (strMessage.includes('cmd_me')) {
+if (strMessage.includes('cmd_me')) {
     const students = await studentData(to)
 
     if (!students || !students.length) {
@@ -101,6 +101,13 @@ app.post('/wa', authenticateBearer, async (req, res) => {
             .status(200)
             .json(dataNotFound("Sorry, this phone number is not valid!"))
     }
+
+    // remove duplicate accounts by account.id
+    const uniqueAccounts = [
+        ...new Map(
+            students.map(s => [s.account.id, s.account])
+        ).values()
+    ]
 
     return res.status(200).json({
         type: "interactive",
@@ -111,16 +118,13 @@ app.post('/wa', authenticateBearer, async (req, res) => {
             },
             action: {
                 buttons: [
-                    // dynamic student buttons
-                    ...students.map((student) => ({
+                    ...uniqueAccounts.map(account => ({
                         type: "reply",
                         reply: {
-                            id: `cmd_account_${student.account.id}`,
-                            title: `${student.account.name}`
+                            id: `cmd_account_${account.id}`,
+                            title: account.name
                         }
                     })),
-
-                    // static main menu button
                     {
                         type: "reply",
                         reply: {
