@@ -30,10 +30,10 @@ const authenticateBearer = (req, res, next) => {
 }
 
 // Fetch student data
-const studentData = async (phone) => {
+const studentData = async (phone, account = null) => {
     try {
         const response = await fetch(
-            `https://lms.eu1.storap.com/flows/trigger/7569a48f-1732-4373-ae98-d942a1440ab5?phone=${phone}`
+            `https://lms.eu1.storap.com/flows/trigger/7569a48f-1732-4373-ae98-d942a1440ab5?phone=${phone}${account ? `&account=${account}` : ''}`
         )
 
         if (!response.ok) {
@@ -93,7 +93,7 @@ app.post('/wa', authenticateBearer, async (req, res) => {
 
         const strMessage = JSON.stringify(messages?.[0]?.text?.body || messages?.[0]?.interactive?.button_reply?.id).toLowerCase()
 
-if (strMessage.includes('cmd_me')) {
+if (strMessage.includes('cmd_pay')) {
     const students = await studentData(to)
 
     if (!students || !students.length) {
@@ -102,7 +102,6 @@ if (strMessage.includes('cmd_me')) {
             .json(dataNotFound("Sorry, this phone number is not valid!"))
     }
 
-    // remove duplicate accounts by account.id
     const uniqueAccounts = [
         ...new Map(
             students.map(s => [s.account.id, s.account])
@@ -119,6 +118,44 @@ if (strMessage.includes('cmd_me')) {
             action: {
                 buttons: [
                     ...uniqueAccounts.map(account => ({
+                        type: "reply",
+                        reply: {
+                            id: `cmd_pay_account_${account.id}`,
+                            title: account.name
+                        }
+                    })),
+                    {
+                        type: "reply",
+                        reply: {
+                            id: "cmd_main_menu",
+                            title: "Main Menu"
+                        }
+                    }
+                ]
+            }
+        }
+    })
+}
+
+if (strMessage.includes('cmd_pay_account')) {
+    const students = await studentData(to, strMessage.replace('cmd_pay_account', ''))
+
+    if (!students || !students.length) {
+        return res
+            .status(200)
+            .json(dataNotFound("Sorry, this phone number is not valid!"))
+    }
+
+    return res.status(200).json({
+        type: "interactive",
+        interactive: {
+            type: "button",
+            body: {
+                text: "Select"
+            },
+            action: {
+                buttons: [
+                    ...students.map(account => ({
                         type: "reply",
                         reply: {
                             id: `cmd_account_${account.id}`,
@@ -180,14 +217,14 @@ if (strMessage.includes('cmd_me')) {
                             type: "reply",
                             reply: {
                                 id: "cmd_zoom",
-                                title: "Join Online Class"
+                                title: "🎥 Join Online Class"
                             }
                         },
                         {
                             type: "reply",
                             reply: {
-                                id: "cmd_me",
-                                title: "About Me"
+                                id: "cmd_pay",
+                                title: "💵 Pay Class Fees"
                             }
                         }
                     ]
