@@ -98,7 +98,7 @@ app.post('/wa', authenticateBearer, async (req, res) => {
                 return res
                     .status(200)
                     .json(dataNotFound(strMessage))
-                    
+
             const data = strMessage.replace('cmd_pay_account_student_', '')
             const accountId = data.split('_')[0]
             const studentId = data.split('_')[1]
@@ -140,7 +140,7 @@ app.post('/wa', authenticateBearer, async (req, res) => {
         }
 
         if (strMessage.includes('cmd_pay_account_')) {
-            const accountId = strMessage.replace('cmd_pay_account_', '')
+            const accountId = strMessage.replace('cmd_pay_account_', '').replaceAll('\\"', '')
             const students = await studentData(to, accountId)
 
             if (!students || !students.length) {
@@ -161,7 +161,7 @@ app.post('/wa', authenticateBearer, async (req, res) => {
                             ...students.map(student => ({
                                 type: "reply",
                                 reply: {
-                                    id: `cmd_pay_account_student_${accountId}_${student.student_id}`,
+                                    id: `cmd_pay_account_student_${accountId}_${student.student_id.replaceAll('\\"', '')}`,
                                     title: student.name
                                 }
                             })),
@@ -205,7 +205,7 @@ app.post('/wa', authenticateBearer, async (req, res) => {
                             ...uniqueAccounts.map(account => ({
                                 type: "reply",
                                 reply: {
-                                    id: `cmd_pay_account_${account.id}`,
+                                    id: `cmd_pay_account_${account.id.replaceAll('\\"', '')}`,
                                     title: account.name
                                 }
                             })),
