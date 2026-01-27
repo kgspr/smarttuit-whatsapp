@@ -128,7 +128,7 @@ app.post('/wa', authenticateBearer, async (req, res) => {
                 interactive: {
                     type: "button",
                     body: {
-                        text: `pay.storap.com/${student?.student?.data?.student?.name}`
+                        text: `app.smarttuit.com/${student?.student?.data?.student?.student_id}?token=${JSON.stringify(student)}`
                     },
                     action: {
                         buttons: [
