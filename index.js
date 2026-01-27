@@ -103,7 +103,7 @@ app.post('/wa', authenticateBearer, async (req, res) => {
             const studentId = data.split('_')[1]
             const students = await studentData(to, accountId, studentId)
 
-            if (!students || !students.length) {
+            if (!students || !students.data) {
                 return res
                     .status(200)
                     .json(dataNotFound("Sorry, this phone number is not valid!"))
