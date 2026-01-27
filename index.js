@@ -91,18 +91,13 @@ app.post('/wa', authenticateBearer, async (req, res) => {
             return res.status(200).send('EVENT_RECEIVED')
         }
 
-const strMessage = (
-    messages?.[0]?.text?.body ||
-    messages?.[0]?.interactive?.button_reply?.id ||
-    ''
-).toLowerCase()
+        const strMessage = (
+            messages?.[0]?.text?.body ||
+            messages?.[0]?.interactive?.button_reply?.id ||
+            ''
+        ).toLowerCase()
 
         if (strMessage.includes('cmd_pay_account_student_')) {
-
-                return res
-                    .status(200)
-                    .json(dataNotFound(strMessage))
-
             const data = strMessage.replace('cmd_pay_account_student_', '')
             const accountId = data.split('_')[0]
             const studentId = data.split('_')[1]
