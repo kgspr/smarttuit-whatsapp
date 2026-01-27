@@ -112,11 +112,11 @@ app.post('/wa', authenticateBearer, async (req, res) => {
             action: {
                 buttons: [
                     // dynamic student buttons
-                    ...students.map((account) => ({
+                    ...students.map((student) => ({
                         type: "reply",
                         reply: {
-                            id: `cmd_student_${account.id}`, // unique id
-                            title: account.name || "Student"
+                            id: `cmd_student_${student.account.id}_${student.student_id}`, // unique id
+                            title: student.account.name
                         }
                     })),
 
