@@ -95,7 +95,7 @@ app.post('/wa', authenticateBearer, async (req, res) => {
 
         if (strMessage.includes('cmd_me')) {
             const student = await studentData(to);
-            if (!student?.data) return res.status(200).json(dataNotFound("Sorry, this phone number is not vaild!"));
+            if (!student?.length) return res.status(200).json(dataNotFound("Sorry, this phone number is not vaild!"));
             return res.status(200).json({
                 type: "interactive",
                 interactive: {
