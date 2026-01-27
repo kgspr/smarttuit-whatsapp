@@ -138,7 +138,7 @@ if (strMessage.includes('cmd_pay_fees')) {
 }
 
 if (strMessage.includes('cmd_pay_account')) {
-    const students = await studentData(to, strMessage.replace('cmd_pay_account', ''))
+    const students = await studentData(to, strMessage.replace('cmd_pay_account_', ''))
 
     if (!students || !students.length) {
         return res
