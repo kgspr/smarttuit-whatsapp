@@ -30,10 +30,10 @@ const authenticateBearer = (req, res, next) => {
 }
 
 // Fetch student data
-const studentData = async (phone, account = null) => {
+const studentData = async (phone, account = null, student_id = null) => {
     try {
         const response = await fetch(
-            `https://lms.eu1.storap.com/flows/trigger/7569a48f-1732-4373-ae98-d942a1440ab5?phone=${phone}${account ? `&account=${account.replaceAll('\"', '')}` : ''}`
+            `https://lms.eu1.storap.com/flows/trigger/7569a48f-1732-4373-ae98-d942a1440ab5?phone=${phone}${account ? `&account=${account.replaceAll('\"', '')}` : ''}${student_id ? `&student_id=${student_id.replaceAll('\"', '')}` : ''}`
         )
 
         if (!response.ok) {
@@ -94,8 +94,16 @@ app.post('/wa', authenticateBearer, async (req, res) => {
         const strMessage = JSON.stringify(messages?.[0]?.text?.body || messages?.[0]?.interactive?.button_reply?.id).toLowerCase()
 
         if (strMessage.includes('cmd_pay_account_student_')) {
+
+            if (!students || !students.length) {
+                return res
+                    .status(200)
+                    .json(dataNotFound(strMessage))
+            }
             const data = strMessage.replace('cmd_pay_account_student_', '')
-            const students = await studentData(to, accountId)
+            const accountId = data.split('_')[0]
+            const studentId = data.split('_')[1]
+            const students = await studentData(to, accountId, studentId)
 
             if (!students || !students.length) {
                 return res
