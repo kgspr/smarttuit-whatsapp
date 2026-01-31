@@ -300,7 +300,7 @@ const {token} = req.body
 
   const valueArray = decoded.split("|");
 
-  return res.status(500).json({
+  return res.status(200).json({
     student_sysid: valueArray[0],
     first_name: valueArray[1],
     last_name: valueArray[2],
