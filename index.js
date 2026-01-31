@@ -1,5 +1,6 @@
 import express from 'express'
 import dotenv from 'dotenv'
+import crypto from 'crypto'
 
 dotenv.config()
 
@@ -308,6 +309,18 @@ const {token} = req.body
     payable: valueArray[4],
     payments: valueArray[5],
   });
+})
+
+function sha256(source) {
+  return crypto
+    .createHash("sha256")
+    .update(text)
+    .digest("hex");
+}
+
+app.post('/sha256', async (req, res) => {
+const {source} = req.body
+  return res.status(200).json({"sha256": sha256(source)});
 })
 
 app.listen(process.env.PORT, () => {
