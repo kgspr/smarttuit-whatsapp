@@ -294,8 +294,8 @@ app.post('/wa', authenticateBearer, async (req, res) => {
     }
 })
 
-app.get('/get_payments', async (req, res) => {
-const {token} = req.query
+app.post('/get_payments', async (req, res) => {
+const {token} = req.body
   const decoded = atob(token)
 
   const valueArray = decoded.split("|");
