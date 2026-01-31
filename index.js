@@ -300,14 +300,14 @@ const {token} = req.query
 
   const valueArray = decoded.split("|");
 
-  return {
+  return es.status(500).json({
     student_sysid: valueArray[0],
     first_name: valueArray[1],
     last_name: valueArray[2],
     phone: valueArray[3],
     total: valueArray[4],
     payments: valueArray[5],
-  };
+  });
 })
 
 app.listen(process.env.PORT, () => {
