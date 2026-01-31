@@ -294,6 +294,22 @@ app.post('/wa', authenticateBearer, async (req, res) => {
     }
 })
 
+app.get('/get_payments', async (req, res) => {
+const {token} = req.body
+  const decoded = atob(token)
+
+  const valueArray = decoded.split("|");
+
+  return {
+    student_sysid: valueArray[0],
+    first_name: valueArray[1],
+    last_name: valueArray[2],
+    phone: valueArray[3],
+    total: valueArray[4],
+    payments: valueArray[5],
+  };
+})
+
 app.listen(process.env.PORT, () => {
     console.log(`🚀 Server running on port ${process.env.PORT}`)
 })
