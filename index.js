@@ -314,7 +314,7 @@ const {token} = req.body
 function sha256(source) {
   return crypto
     .createHash("sha256")
-    .update(text)
+    .update(source)
     .digest("hex");
 }
 
