@@ -305,7 +305,7 @@ const {token} = req.body
     first_name: valueArray[1],
     last_name: valueArray[2],
     phone: valueArray[3],
-    total: valueArray[4],
+    payable: valueArray[4],
     payments: valueArray[5],
   });
 })
