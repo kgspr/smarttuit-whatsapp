@@ -76,25 +76,25 @@ const zoomMeetingData = async (phone) => {
 
 const dataNotFound = (message) => {
     return {
-                type: "interactive",
-                interactive: {
-                    type: "button",
-                    body: {
-                        "text": message //"https://zoom.us"
-                    },
-                    action: {
-                        buttons: [
-                            {
-                                type: "reply",
-                                reply: {
-                                    id: "cmd_main_menu",
-                                    title: "🏠 Main Menu"
-                                }
-                            }
-                        ]
+        type: "interactive",
+        interactive: {
+            type: "button",
+            body: {
+                "text": message //"https://zoom.us"
+            },
+            action: {
+                buttons: [
+                    {
+                        type: "reply",
+                        reply: {
+                            id: "cmd_main_menu",
+                            title: "🏠 Main Menu"
+                        }
                     }
-                }
+                ]
             }
+        }
+    }
 }
 
 // WhatsApp webhook
@@ -172,13 +172,16 @@ app.post('/wa', authenticateBearer, async (req, res) => {
                                     title: student.name
                                 }
                             })),
-                            {
-                                type: "reply",
-                                reply: {
-                                    id: "cmd_main_menu",
-                                    title: "🏠 Main Menu"
-                                }
-                            }
+                            ...(students.length === 3
+            ? []
+            : [{
+                type: "reply",
+                reply: {
+                    id: "cmd_main_menu",
+                    title: "🏠 Main Menu"
+                }
+            }]
+        )
                         ]
                     }
                 }
@@ -216,13 +219,16 @@ app.post('/wa', authenticateBearer, async (req, res) => {
                                     title: account.name
                                 }
                             })),
-                            {
-                                type: "reply",
-                                reply: {
-                                    id: "cmd_main_menu",
-                                    title: "🏠 Main Menu"
-                                }
-                            }
+                            ...(uniqueAccounts.length === 3
+                                ? []
+                                : [{
+                                    type: "reply",
+                                    reply: {
+                                        id: "cmd_main_menu",
+                                        title: "🏠 Main Menu"
+                                    }
+                                }]
+                            )
                         ]
                     }
                 }
@@ -296,31 +302,31 @@ app.post('/wa', authenticateBearer, async (req, res) => {
 })
 
 app.post('/get_payments', async (req, res) => {
-const {token} = req.body
-  const decoded = atob(token)
+    const { token } = req.body
+    const decoded = atob(token)
 
-  const valueArray = decoded.split("|");
+    const valueArray = decoded.split("|");
 
-  return res.status(200).json({
-    student_sysid: valueArray[0],
-    first_name: valueArray[1],
-    last_name: valueArray[2],
-    phone: valueArray[3],
-    payable: valueArray[4],
-    payments: valueArray[5],
-  });
+    return res.status(200).json({
+        student_sysid: valueArray[0],
+        first_name: valueArray[1],
+        last_name: valueArray[2],
+        phone: valueArray[3],
+        payable: valueArray[4],
+        payments: valueArray[5],
+    });
 })
 
 function sha256(source) {
-  return crypto
-    .createHash("sha256")
-    .update(source)
-    .digest("hex");
+    return crypto
+        .createHash("sha256")
+        .update(source)
+        .digest("hex");
 }
 
 app.post('/sha256', async (req, res) => {
-const {source} = req.body
-  return res.status(200).json({"sha256": sha256(source)});
+    const { source } = req.body
+    return res.status(200).json({ "sha256": sha256(source) });
 })
 
 app.listen(process.env.PORT, () => {
