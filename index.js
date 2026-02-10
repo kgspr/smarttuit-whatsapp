@@ -219,25 +219,25 @@ app.post('/wa', authenticateBearer, async (req, res) => {
                     body: '{"account":51}'
                 };
 
-                const controller = new AbortController();
+//                 const controller = new AbortController();
 
-setTimeout(() => controller.abort(), 3_000);
+// setTimeout(() => controller.abort(), 3_000);
 
-                await fetch(`https://lms.eu1.storap.com/files/${fileId}`, options)
-                .then((resImg) => {
-                    return res
-                    .status(200)
-                    .json(resImg)
-                })
-                    .catch(err => {
-                        return res
-                            .status(200)
-                            .json(withHome("Something went wrong!"))
-                    });
+//                 await fetch(`https://lms.eu1.storap.com/files/${fileId}`, options)
+//                 .then((resImg) => {
+//                     return res
+//                     .status(200)
+//                     .json(resImg)
+//                 })
+//                     .catch(err => {
+//                         return res
+//                             .status(200)
+//                             .json(withHome("Something went wrong!"))
+//                     });
 
                 return res
                     .status(200)
-                    .json(withHome(to + fileId + accountId + ipgRequestId))
+                    .json(withHome(fileId))
             } catch {
                 return res
                     .status(200)
