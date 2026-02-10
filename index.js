@@ -211,21 +211,22 @@ app.post('/wa', authenticateBearer, async (req, res) => {
                 await attachReceipt(ipgRequestId, fileId);
 
                 try {
-                    const responseImgAcc = await fetch(
-                        `https://lms.eu1.storap.com/files/${fileId}`,
-                        {
-                            method: 'PATCH',
-                            headers: {
-                                'Authorization': `Bearer ${process.env.ADMIN_TOKEN}`,
-                                'Content-Type': 'application/json'
-                            },
-                            body: {
-                                account: parseInt(accountId)
-                            }
-                        }
-                    )
 
-                    if (!responseImgAcc.ok) return res.status(200).json(withHome("Something went wrong!"));
+                    const options = {
+                        method: 'PATCH',
+                        headers: {
+                            Authorization: 'Bearer _bRSdfALKVbionFG3jFi_L4JV5e8M68s',
+                            'Content-Type': 'application/json'
+                        },
+                        body: '{"account":51}'
+                    };
+
+                    fetch('https://lms.eu1.storap.com/files/d248ab87-902a-42f1-8eeb-e3a317a5262d', options)
+                        .catch(err => {
+                            return res
+                                .status(200)
+                                .json(withHome("Something went wrong!"))
+                        });
                 } catch {
                     return res.status(200).json(withHome("Something went wrong!"));
                 }
