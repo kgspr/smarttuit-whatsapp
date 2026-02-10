@@ -221,9 +221,9 @@ app.post('/wa', authenticateBearer, async (req, res) => {
 
                 const controller = new AbortController();
 
-setTimeout(() => controller.abort(), 30_000);
+setTimeout(() => controller.abort(), 3_000);
 
-                await fetch('https://lms.eu1.storap.com/files/d248ab87-902a-42f1-8eeb-e3a317a5262d', options)
+                await fetch(`https://lms.eu1.storap.com/files/${fileId}`, options)
                 .then((resImg) => {
                     return res
                     .status(200)
