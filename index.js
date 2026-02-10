@@ -1,11 +1,86 @@
 import express from 'express'
 import dotenv from 'dotenv'
 import crypto from 'crypto'
+import fetch from "node-fetch";
+import FormData from "form-data";
+import fs from "fs";
 
 dotenv.config()
 
 const app = express()
 app.use(express.json())
+
+const WHATSAPP_TOKEN = process.env.WHATSAPP_TOKEN;
+const DIRECTUS_URL = "https://lms.eu1.storap.com";
+const ADMIN_TOKEN = process.env.ADMIN_TOKEN;
+
+async function downloadWhatsAppImage(message) {
+    const mediaId = message.image.id;
+
+    // 1. Get media URL
+    const metaRes = await fetch(
+        `https://graph.facebook.com/v19.0/${mediaId}`,
+        {
+            headers: {
+                Authorization: `Bearer ${WHATSAPP_TOKEN}`,
+            },
+        }
+    );
+
+    const { url } = await metaRes.json();
+
+    // 2. Download binary
+    const imgRes = await fetch(url, {
+        headers: {
+            Authorization: `Bearer ${WHATSAPP_TOKEN}`,
+        },
+    });
+
+    const buffer = Buffer.from(await imgRes.arrayBuffer());
+
+    return {
+        buffer,
+        mime: message.image.mime_type,
+        filename: `receipt-${Date.now()}.jpg`,
+    };
+}
+
+async function uploadToDirectus(file) {
+    const form = new FormData();
+
+    form.append("file", file.buffer, {
+        filename: file.filename,
+        contentType: file.mime,
+    });
+
+    const res = await fetch(`${DIRECTUS_URL}/files`, {
+        method: "POST",
+        headers: {
+            Authorization: `Bearer ${ADMIN_TOKEN}`,
+        },
+        body: form,
+    });
+
+    const json = await res.json();
+
+    return json.data.id; // ← Directus file ID
+}
+
+async function attachReceipt(itemId, fileId) {
+    await fetch(
+        `${DIRECTUS_URL}/items/ipg_requests/${itemId}`,
+        {
+            method: "PATCH",
+            headers: {
+                Authorization: `Bearer ${ADMIN_TOKEN}`,
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                receipt: fileId,
+            }),
+        }
+    );
+}
 
 // Bearer token middleware
 const authenticateBearer = (req, res, next) => {
@@ -107,6 +182,9 @@ app.post('/wa', authenticateBearer, async (req, res) => {
             return res.status(200).send('EVENT_RECEIVED')
         }
 
+        const message = messages[0] || null
+        if (!message) return res.status(200).json(withHome("Something went wrong!"));
+
         if (messages[0].type == 'image') {
             try {
                 const response = await fetch(
@@ -122,11 +200,14 @@ app.post('/wa', authenticateBearer, async (req, res) => {
 
                 const ipgData = await response.json()
 
-                if (!response.ok) {
-                    return res
-                        .status(200)
-                        .json(withHome("Something went wrong!"))
-                }
+                if (!response.ok) return res.status(200).json(withHome("Something went wrong!"));
+
+                const ipgRequestId = ipgData?.data?.[0]?.id || null
+                if (!ipgRequestId) return res.status(200).json(withHome("Something went wrong!"));
+
+                const file = await downloadWhatsAppImage(message);
+                const fileId = await uploadToDirectus(file);
+                await attachReceipt(ipgRequestId, fileId);
 
                 return res
                     .status(200)
@@ -182,8 +263,8 @@ app.post('/wa', authenticateBearer, async (req, res) => {
             const accountId = strMessage.replace('cmd_pay_account_', '')
             const _students = await studentData(to, accountId)
             const students = _students.filter(
-  (s) => s.account === accountId
-);
+                (s) => s.account === accountId
+            );
 
             if (!students || !students.length) {
                 return res
