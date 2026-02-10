@@ -205,7 +205,7 @@ app.post('/wa', authenticateBearer, async (req, res) => {
         if (message.type === "image") {
             try {
                 const response = await fetch(
-                    `https://lms.eu1.storap.com/items/ipg_requests?filter[phone][_eq]=${to}&filter[receipt][_eq]=null&filter[status][_eq]=pending&fields=id,account&sort=-date_created&limit=1`,
+                    `https://lms.eu1.storap.com/items/ipg_requests?filter[phone][_eq]=${to}&filter[date_created][_gt]=$NOW(-1 minute)&filter[receipt][_eq]=null&filter[status][_eq]=pending&fields=id,account&sort=-date_created&limit=1`,
                     {
                         method: 'GET',
                         headers: {
