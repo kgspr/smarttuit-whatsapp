@@ -106,12 +106,18 @@ app.post('/wa', authenticateBearer, async (req, res) => {
             return res.status(200).send('EVENT_RECEIVED')
         }
 
+        if(messages[0].type == 'image'){
+                return res
+                    .status(200)
+                    .json(dataNotFound("Sorry, this phone number is not valid!"))
+        }
+
         const strMessage = (
             messages?.[0]?.text?.body ||
             messages?.[0]?.interactive?.button_reply?.id ||
             ''
         ).toLowerCase()
-
+        
         if (strMessage.includes('cmd_pay_account_student_')) {
             const data = strMessage.replace('cmd_pay_account_student_', '')
             const accountId = data.split('_')[0]
