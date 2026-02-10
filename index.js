@@ -63,6 +63,7 @@ async function uploadToDirectus(file, accountId) {
 
     const json = await res.json();
 
+    try{
     const response = await fetch(
         `https://lms.eu1.storap.com/files/${json.data.id}`,
         {
@@ -78,6 +79,9 @@ async function uploadToDirectus(file, accountId) {
     )
 
     if (!response.ok) return res.status(200).json(withHome("Something went wrong1!"));
+}catch{
+     return res.status(200).json(withHome("Something went wrong!22"));
+}
 
     return json.data.id; // ← Directus file ID
 }
