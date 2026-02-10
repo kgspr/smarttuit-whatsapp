@@ -232,7 +232,7 @@ app.post('/wa', authenticateBearer, async (req, res) => {
             } catch {
                 return res
                     .status(200)
-                    .json(withHome("Something went wrong!"))
+                    .json(withHome("Something went wrong2!"))
             }
         }
 
