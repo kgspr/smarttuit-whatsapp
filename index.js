@@ -210,8 +210,6 @@ app.post('/wa', authenticateBearer, async (req, res) => {
                 const fileId = await uploadToDirectus(file, accountId);
                 await attachReceipt(ipgRequestId, fileId);
 
-                try {
-
                     const options = {
                         method: 'PATCH',
                         headers: {
@@ -225,11 +223,8 @@ app.post('/wa', authenticateBearer, async (req, res) => {
                         .catch(err => {
                             return res
                                 .status(200)
-                                .json(withHome("Something went wrong!"))
+                                .json(withHome("Something went wrong2!"))
                         });
-                } catch {
-                    return res.status(200).json(withHome("Something went wrong!"));
-                }
 
                 return res
                     .status(200)
