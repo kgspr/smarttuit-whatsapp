@@ -69,8 +69,9 @@ const zoomMeetingData = async (phone) => {
         // Change to .text() if your flow returns text
         return await response.json()
     } catch (err) {
-        console.error('zoomData error:', err.message)
-        return null
+                return res
+                    .status(200)
+                    .json(dataNotFound("Something went wrong!"))
     }
 }
 
@@ -107,9 +108,26 @@ app.post('/wa', authenticateBearer, async (req, res) => {
         }
 
         if(messages[0].type == 'image'){
+        const response = await fetch(
+            `https://lms.eu1.storap.com/items/igp_requests?filter[phone][_eq]=${encodeURIComponent(phone)}&fields=id&sort=-date_created&limit=1`,
+            {
+                method: 'GET',
+                headers: {
+                    'Authorization': 'Bearer _bRSdfALKVbionFG3jFi_L4JV5e8M68s',
+                    'Content-Type': 'application/json'
+                }
+            }
+        )
+
+        if (!response.ok) {
+            res
+                    .status(200)
+                    .json(dataNotFound("Something went wrong!"))
+        }
+
                 return res
                     .status(200)
-                    .json(dataNotFound("Sorry, this phone number is not valid!"))
+                    .json(dataNotFound(JSON.stringify(response)))
         }
 
         const strMessage = (
