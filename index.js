@@ -46,24 +46,34 @@ async function downloadWhatsAppImage(message) {
 }
 
 async function uploadToDirectus(file) {
-    const form = new FormData();
+  const form = new FormData();
 
-    form.append("file", file.buffer, {
-        filename: file.filename,
-        contentType: file.mime,
-    });
+  // File binary
+  form.append("file", file.buffer, {
+    filename: file.filename,
+    contentType: file.mime,
+  });
 
-    const res = await fetch(`${DIRECTUS_URL}/files`, {
-        method: "POST",
-        headers: {
-            Authorization: `Bearer ${ADMIN_TOKEN}`,
-        },
-        body: form,
-    });
+  // 🔹 Custom file fields (directus_files)
+  form.append("duration", "1 hour"); // or 3600 if numeric
+  form.append("account", "51");       // must be string in FormData
 
-    const json = await res.json();
+  const res = await fetch(`${DIRECTUS_URL}/files`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${ADMIN_TOKEN}`,
+      // ❌ DO NOT set Content-Type manually
+    },
+    body: form,
+  });
 
-    return json.data.id; // ← Directus file ID
+  const json = await res.json();
+
+  if (!json?.data?.id) {
+    throw new Error(`File upload failed: ${JSON.stringify(json)}`);
+  }
+
+  return json.data.id; // Directus file ID
 }
 
 async function attachReceipt(itemId, fileId) {
