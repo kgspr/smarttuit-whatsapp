@@ -108,32 +108,32 @@ app.post('/wa', authenticateBearer, async (req, res) => {
         }
 
         if (messages[0].type == 'image') {
-            try{
-            const response = await fetch(
-                `https://lms.eu1.storap.com/items/ipg_requests?filter[phone][_eq]=${encodeURIComponent(phone)}&fields=id&sort=-date_created&limit=1`,
-                {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${process.env.ADMIN_TOKEN}`,
-                        'Content-Type': 'application/json'
+            try {
+                const response = await fetch(
+                    `https://lms.eu1.storap.com/items/ipg_requests?filter[phone][_eq]=${encodeURIComponent(to)}&fields=id&sort=-date_created&limit=1`,
+                    {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${process.env.ADMIN_TOKEN}`,
+                            'Content-Type': 'application/json'
+                        }
                     }
-                }
-            )
+                )
 
-            if (!response.ok) {
-                res
+                if (!response.ok) {
+                    return res
+                        .status(200)
+                        .json(dataNotFound("Something went wrong!"))
+                }
+
+                return res
+                    .status(200)
+                    .json(dataNotFound('Ji'))
+            } catch {
+                return res
                     .status(200)
                     .json(dataNotFound("Something went wrong!"))
             }
-
-            return res
-                .status(200)
-                .json(dataNotFound('Ji'))
-        }catch{
-                res
-                    .status(200)
-                    .json(dataNotFound("Something went wrong!"))
-        }
         }
 
         const strMessage = (
