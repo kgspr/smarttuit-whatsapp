@@ -63,6 +63,26 @@ async function uploadToDirectus(file, accountId) {
 
     const json = await res.json();
 
+    try {
+        const responseImgAcc = await fetch(
+            `https://lms.eu1.storap.com/files/${json.data.id}`,
+            {
+                method: 'PATCH',
+                headers: {
+                    'Authorization': `Bearer ${process.env.ADMIN_TOKEN}`,
+                    'Content-Type': 'application/json'
+                },
+                body: {
+                    account: accountId
+                }
+            }
+        )
+
+        if (!responseImgAcc.ok) return res.status(200).json(withHome("Something went wrong!"));
+    } catch {
+        return res.status(200).json(withHome("Something went wrong!"));
+    }
+
     return json.data.id; // ← Directus file ID
 }
 
@@ -212,7 +232,7 @@ app.post('/wa', authenticateBearer, async (req, res) => {
 
                 return res
                     .status(200)
-                    .json(withHome(to + ipgData.length + ipgData?.data?.[0]?.id))
+                    .json(withHome(to + fileId + ipgData?.data?.[0]?.id))
             } catch {
                 return res
                     .status(200)
