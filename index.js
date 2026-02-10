@@ -14,36 +14,53 @@ const WHATSAPP_TOKEN = process.env.WHATSAPP_TOKEN;
 const DIRECTUS_URL = "https://lms.eu1.storap.com";
 const ADMIN_TOKEN = process.env.ADMIN_TOKEN;
 
-async function downloadWhatsAppImage(message) {
-    const mediaId = message.image.id;
+async function downloadWhatsAppMedia(message) {
+  let media;
+  let extension = "bin";
 
-    // 1. Get media URL
-    const metaRes = await fetch(
-        `https://graph.facebook.com/v19.0/${mediaId}`,
-        {
-            headers: {
-                Authorization: `Bearer ${WHATSAPP_TOKEN}`,
-            },
-        }
-    );
+  if (message.type === "image") {
+    media = message.image;
+    extension = "jpg";
+  } else if (message.type === "document") {
+    media = message.document;
+    extension = media.mime_type === "application/pdf" ? "pdf" : "bin";
+  } else {
+    throw new Error("Unsupported media type");
+  }
 
-    const { url } = await metaRes.json();
+  const mediaId = media.id;
 
-    // 2. Download binary
-    const imgRes = await fetch(url, {
-        headers: {
-            Authorization: `Bearer ${WHATSAPP_TOKEN}`,
-        },
-    });
+  // 1. Get media URL
+  const metaRes = await fetch(
+    `https://graph.facebook.com/v19.0/${mediaId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${WHATSAPP_TOKEN}`,
+      },
+    }
+  );
 
-    const buffer = Buffer.from(await imgRes.arrayBuffer());
+  const metaJson = await metaRes.json();
+  if (!metaJson.url) throw new Error("Failed to get media URL");
 
-    return {
-        buffer,
-        mime: message.image.mime_type,
-        filename: `receipt-${Date.now()}.jpg`,
-    };
+  // 2. Download binary
+  const mediaRes = await fetch(metaJson.url, {
+    headers: {
+      Authorization: `Bearer ${WHATSAPP_TOKEN}`,
+    },
+  });
+
+  const buffer = Buffer.from(await mediaRes.arrayBuffer());
+
+  return {
+    buffer,
+    mime: media.mime_type,
+    filename:
+      media.filename ||
+      `receipt-${Date.now()}.${extension}`,
+  };
 }
+
 
 async function uploadToDirectus(file, accountId) {
     const form = new FormData();
@@ -185,7 +202,16 @@ app.post('/wa', authenticateBearer, async (req, res) => {
         const message = messages[0] || null
         if (!message) return res.status(200).json(withHome("Something went wrong!"));
 
-        if (messages[0].type == 'image') {
+        if (
+  message.type === "document" &&
+  message.document.mime_type !== "application/pdf"
+) {
+  return res.status(200).json(
+    withHome("Please upload a PDF or image of receipt.")
+  );
+}
+
+  if (message.type === "image" || message.type === "document") {
             try {
                 const response = await fetch(
                     `https://lms.eu1.storap.com/items/ipg_requests?filter[phone][_eq]=${to}&fields=id,account&sort=-date_created&limit=1`,
@@ -206,34 +232,9 @@ app.post('/wa', authenticateBearer, async (req, res) => {
                 const accountId = ipgData?.data?.[0]?.account || null
                 if (!ipgRequestId || !accountId) return res.status(200).json(withHome("Something went wrong!"));
 
-                const file = await downloadWhatsAppImage(message);
+                const file = await downloadWhatsAppMedia(message);
                 const fileId = await uploadToDirectus(file, accountId);
                 await attachReceipt(ipgRequestId, fileId);
-
-                const options = {
-                    method: 'PATCH',
-                    headers: {
-                        Authorization: 'Bearer _bRSdfALKVbionFG3jFi_L4JV5e8M68s',
-                        'Content-Type': 'application/json'
-                    },
-                    body: '{"account":51}'
-                };
-
-//                 const controller = new AbortController();
-
-// setTimeout(() => controller.abort(), 3_000);
-
-//                 await fetch(`https://lms.eu1.storap.com/files/${fileId}`, options)
-//                 .then((resImg) => {
-//                     return res
-//                     .status(200)
-//                     .json(resImg)
-//                 })
-//                     .catch(err => {
-//                         return res
-//                             .status(200)
-//                             .json(withHome("Something went wrong!"))
-//                     });
 
                 return res
                     .status(200)
