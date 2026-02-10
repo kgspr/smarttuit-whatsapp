@@ -220,7 +220,7 @@ app.post('/wa', authenticateBearer, async (req, res) => {
                                 'Content-Type': 'application/json'
                             },
                             body: {
-                                account: accountId
+                                account: parseInt(accountId)
                             }
                         }
                     )
