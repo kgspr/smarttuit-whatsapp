@@ -15,50 +15,50 @@ const DIRECTUS_URL = "https://lms.eu1.storap.com";
 const ADMIN_TOKEN = process.env.ADMIN_TOKEN;
 
 async function downloadWhatsAppMedia(message) {
-  let media;
-  let extension = "bin";
+    let media;
+    let extension = "bin";
 
-  if (message.type === "image") {
-    media = message.image;
-    extension = "jpg";
-  } else if (message.type === "document") {
-    media = message.document;
-    extension = media.mime_type === "application/pdf" ? "pdf" : "bin";
-  } else {
-    throw new Error("Unsupported media type");
-  }
-
-  const mediaId = media.id;
-
-  // 1. Get media URL
-  const metaRes = await fetch(
-    `https://graph.facebook.com/v19.0/${mediaId}`,
-    {
-      headers: {
-        Authorization: `Bearer ${WHATSAPP_TOKEN}`,
-      },
+    if (message.type === "image") {
+        media = message.image;
+        extension = "jpg";
+    } else if (message.type === "document") {
+        media = message.document;
+        extension = media.mime_type === "application/pdf" ? "pdf" : "bin";
+    } else {
+        throw new Error("Unsupported media type");
     }
-  );
 
-  const metaJson = await metaRes.json();
-  if (!metaJson.url) throw new Error("Failed to get media URL");
+    const mediaId = media.id;
 
-  // 2. Download binary
-  const mediaRes = await fetch(metaJson.url, {
-    headers: {
-      Authorization: `Bearer ${WHATSAPP_TOKEN}`,
-    },
-  });
+    // 1. Get media URL
+    const metaRes = await fetch(
+        `https://graph.facebook.com/v19.0/${mediaId}`,
+        {
+            headers: {
+                Authorization: `Bearer ${WHATSAPP_TOKEN}`,
+            },
+        }
+    );
 
-  const buffer = Buffer.from(await mediaRes.arrayBuffer());
+    const metaJson = await metaRes.json();
+    if (!metaJson.url) throw new Error("Failed to get media URL");
 
-  return {
-    buffer,
-    mime: media.mime_type,
-    filename:
-      media.filename ||
-      `receipt-${Date.now()}.${extension}`,
-  };
+    // 2. Download binary
+    const mediaRes = await fetch(metaJson.url, {
+        headers: {
+            Authorization: `Bearer ${WHATSAPP_TOKEN}`,
+        },
+    });
+
+    const buffer = Buffer.from(await mediaRes.arrayBuffer());
+
+    return {
+        buffer,
+        mime: media.mime_type,
+        filename:
+            media.filename ||
+            `receipt-${Date.now()}.${extension}`,
+    };
 }
 
 
@@ -202,7 +202,7 @@ app.post('/wa', authenticateBearer, async (req, res) => {
         const message = messages[0] || null
         if (!message) return res.status(200).json(withHome("Something went wrong!"));
 
-  if (message.type === "image") {
+        if (message.type === "image") {
             try {
                 const response = await fetch(
                     `https://lms.eu1.storap.com/items/ipg_requests?filter[phone][_eq]=${to}&filter[receipt][_eq]=null&filter[status][_eq]=pending&fields=id,account&sort=-date_created&limit=1`,
@@ -219,17 +219,48 @@ app.post('/wa', authenticateBearer, async (req, res) => {
 
                 if (!response.ok) return res.status(200).json(withHome("Something went wrong!"));
 
-                const ipgRequestId = ipgData?.data?.[0]?.id || null
-                const accountId = ipgData?.data?.[0]?.account || null
-                if (!ipgRequestId || !accountId) return res.status(200).json(withHome("Something went wrong!"));
+                if (ipgData?.data?.[0]?.id) {
 
-                const file = await downloadWhatsAppMedia(message);
-                const fileId = await uploadToDirectus(file, accountId);
-                await attachReceipt(ipgRequestId, fileId);
+                    const ipgRequestId = ipgData?.data?.[0]?.id || null
+                    const accountId = ipgData?.data?.[0]?.account || null
+                    if (!ipgRequestId || !accountId) return res.status(200).json(withHome("Something went wrong!"));
 
-                return res
-                    .status(200)
-                    .json(withHome(fileId))
+                    const file = await downloadWhatsAppMedia(message);
+                    const fileId = await uploadToDirectus(file, accountId);
+                    await attachReceipt(ipgRequestId, fileId);
+
+                    return res
+                        .status(200)
+                        .json(withHome(fileId))
+                } else {
+                    return res.status(200).json({
+                        type: "interactive",
+                        interactive: {
+                            type: "button",
+                            body: {
+                                text: `*Digital Class Fee*\n\nHi, මම ඔබට මුදල් ගෙවීම සිදු කර ගැනීමට සහාය වන්නම්.`
+                            },
+                            action: {
+                                buttons: [
+                                    {
+                                        type: "reply",
+                                        reply: {
+                                            id: "cmd_pay_fees",
+                                            title: "ආරම්භ කරන්​න | Start"
+                                        }
+                                    },
+                                    {
+                                        type: "reply",
+                                        reply: {
+                                            id: "cmd_main_menu",
+                                            title: "ඉවත් වන්න | Cancel"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    })
+                }
             } catch {
                 return res
                     .status(200)
