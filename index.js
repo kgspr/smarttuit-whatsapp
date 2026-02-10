@@ -45,35 +45,43 @@ async function downloadWhatsAppImage(message) {
     };
 }
 
-async function uploadToDirectus(file) {
-  const form = new FormData();
+async function uploadToDirectus(file, accountId) {
+    const form = new FormData();
 
-  // File binary
-  form.append("file", file.buffer, {
-    filename: file.filename,
-    contentType: file.mime,
-  });
+    form.append("file", file.buffer, {
+        filename: file.filename,
+        contentType: file.mime,
+    });
 
-  // 🔹 Custom file fields (directus_files)
-  form.append("duration", "1 hour"); // or 3600 if numeric
-  form.append("account", "51");       // must be string in FormData
+    const res = await fetch(`${DIRECTUS_URL}/files`, {
+        method: "POST",
+        headers: {
+            Authorization: `Bearer ${ADMIN_TOKEN}`,
+        },
+        body: form,
+    });
 
-  const res = await fetch(`${DIRECTUS_URL}/files`, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${ADMIN_TOKEN}`,
-      // ❌ DO NOT set Content-Type manually
-    },
-    body: form,
-  });
+    const json = await res.json();
 
-  const json = await res.json();
+    const response = await fetch(
+            `https://lms.eu1.storap.com/files/${json.data.id}`,
+            {
+                method: 'PATCH',
+                headers: {
+                    'Authorization': `Bearer ${process.env.ADMIN_TOKEN}`,
+                    'Content-Type': 'application/json'
+                },
+                body: {
+                    account: accountId
+                }
+            }
+        )
 
-  if (!json?.data?.id) {
-    throw new Error(`File upload failed: ${JSON.stringify(json)}`);
-  }
+        if (!response.ok) {
+            throw new Error('Failed to fetch zoom data')
+        }
 
-  return json.data.id; // Directus file ID
+    return json.data.id; // ← Directus file ID
 }
 
 async function attachReceipt(itemId, fileId) {
@@ -198,7 +206,7 @@ app.post('/wa', authenticateBearer, async (req, res) => {
         if (messages[0].type == 'image') {
             try {
                 const response = await fetch(
-                    `https://lms.eu1.storap.com/items/ipg_requests?filter[phone][_eq]=${to}&fields=id&sort=-date_created&limit=1`,
+                    `https://lms.eu1.storap.com/items/ipg_requests?filter[phone][_eq]=${to}&fields=id,account&sort=-date_created&limit=1`,
                     {
                         method: 'GET',
                         headers: {
@@ -213,10 +221,11 @@ app.post('/wa', authenticateBearer, async (req, res) => {
                 if (!response.ok) return res.status(200).json(withHome("Something went wrong!"));
 
                 const ipgRequestId = ipgData?.data?.[0]?.id || null
-                if (!ipgRequestId) return res.status(200).json(withHome("Something went wrong!"));
+                const accountId = ipgData?.data?.[0]?.account || null
+                if (!ipgRequestId || !accountId) return res.status(200).json(withHome("Something went wrong!"));
 
                 const file = await downloadWhatsAppImage(message);
-                const fileId = await uploadToDirectus(file);
+                const fileId = await uploadToDirectus(file, accountId);
                 await attachReceipt(ipgRequestId, fileId);
 
                 return res
