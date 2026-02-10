@@ -71,11 +71,11 @@ const zoomMeetingData = async (phone) => {
     } catch (err) {
         return res
             .status(200)
-            .json(dataNotFound("Something went wrong!"))
+            .json(withHome("Something went wrong!"))
     }
 }
 
-const dataNotFound = (message) => {
+const withHome = (message) => {
     return {
         type: "interactive",
         interactive: {
@@ -123,16 +123,16 @@ app.post('/wa', authenticateBearer, async (req, res) => {
                 if (!response.ok) {
                     return res
                         .status(200)
-                        .json(dataNotFound("Something went wrong!"))
+                        .json(withHome("Something went wrong!"))
                 }
 
                 return res
                     .status(200)
-                    .json(dataNotFound('Ji'))
+                    .json(withHome(JSON.stringify(response.body)))
             } catch {
                 return res
                     .status(200)
-                    .json(dataNotFound("Something went wrong!"))
+                    .json(withHome("Something went wrong!"))
             }
         }
 
@@ -151,7 +151,7 @@ app.post('/wa', authenticateBearer, async (req, res) => {
             if (!student || !student.id) {
                 return res
                     .status(200)
-                    .json(dataNotFound("Sorry, this phone number is not valid!"))
+                    .json(withHome("Sorry, this phone number is not valid!"))
             }
 
             return res.status(200).json({
@@ -183,7 +183,7 @@ app.post('/wa', authenticateBearer, async (req, res) => {
             if (!students || !students.length) {
                 return res
                     .status(200)
-                    .json(dataNotFound("Sorry, this phone number is not valid!"))
+                    .json(withHome("Sorry, this phone number is not valid!"))
             }
 
             return res.status(200).json({
@@ -224,7 +224,7 @@ app.post('/wa', authenticateBearer, async (req, res) => {
             if (!students || !students.length) {
                 return res
                     .status(200)
-                    .json(dataNotFound("Sorry, this phone number is not valid!"))
+                    .json(withHome("Sorry, this phone number is not valid!"))
             }
 
             const uniqueAccounts = [
@@ -267,7 +267,7 @@ app.post('/wa', authenticateBearer, async (req, res) => {
 
         if (strMessage.includes('cmd_zoom')) {
             const zoom = await zoomMeetingData(to);
-            if (zoom?.data?.length == 0) return res.status(200).json(dataNotFound("You haven't zoom meetings!"));
+            if (zoom?.data?.length == 0) return res.status(200).json(withHome("You haven't zoom meetings!"));
             let meeting_links = ``
             zoom?.data?.forEach(meeting => {
                 meeting_links += `\n\n*${meeting?.online_classes_id?.class?.name || 'Meeting'}*\n${meeting.link.replace('https://', '')}`
