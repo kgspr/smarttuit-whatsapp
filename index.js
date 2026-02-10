@@ -69,9 +69,9 @@ const zoomMeetingData = async (phone) => {
         // Change to .text() if your flow returns text
         return await response.json()
     } catch (err) {
-                return res
-                    .status(200)
-                    .json(dataNotFound("Something went wrong!"))
+        return res
+            .status(200)
+            .json(dataNotFound("Something went wrong!"))
     }
 }
 
@@ -107,27 +107,33 @@ app.post('/wa', authenticateBearer, async (req, res) => {
             return res.status(200).send('EVENT_RECEIVED')
         }
 
-        if(messages[0].type == 'image'){
-        const response = await fetch(
-            `https://lms.eu1.storap.com/items/ipg_requests?filter[phone][_eq]=${encodeURIComponent(phone)}&fields=id&sort=-date_created&limit=1`,
-            {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${process.env.ADMIN_TOKEN}`,
-                    'Content-Type': 'application/json'
+        if (messages[0].type == 'image') {
+            try{
+            const response = await fetch(
+                `https://lms.eu1.storap.com/items/ipg_requests?filter[phone][_eq]=${encodeURIComponent(phone)}&fields=id&sort=-date_created&limit=1`,
+                {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${process.env.ADMIN_TOKEN}`,
+                        'Content-Type': 'application/json'
+                    }
                 }
-            }
-        )
+            )
 
-        if (!response.ok) {
-            res
+            if (!response.ok) {
+                res
+                    .status(200)
+                    .json(dataNotFound("Something went wrong!"))
+            }
+
+            return res
+                .status(200)
+                .json(dataNotFound('Ji'))
+        }catch{
+                res
                     .status(200)
                     .json(dataNotFound("Something went wrong!"))
         }
-
-                return res
-                    .status(200)
-                    .json(dataNotFound('Ji'))
         }
 
         const strMessage = (
@@ -135,7 +141,7 @@ app.post('/wa', authenticateBearer, async (req, res) => {
             messages?.[0]?.interactive?.button_reply?.id ||
             ''
         ).toLowerCase()
-        
+
         if (strMessage.includes('cmd_pay_account_student_')) {
             const data = strMessage.replace('cmd_pay_account_student_', '')
             const accountId = data.split('_')[0]
@@ -197,15 +203,15 @@ app.post('/wa', authenticateBearer, async (req, res) => {
                                 }
                             })),
                             ...(students.length === 3
-            ? []
-            : [{
-                type: "reply",
-                reply: {
-                    id: "cmd_main_menu",
-                    title: "🏠 Main Menu"
-                }
-            }]
-        )
+                                ? []
+                                : [{
+                                    type: "reply",
+                                    reply: {
+                                        id: "cmd_main_menu",
+                                        title: "🏠 Main Menu"
+                                    }
+                                }]
+                            )
                         ]
                     }
                 }
