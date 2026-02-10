@@ -56,7 +56,7 @@ const zoomMeetingData = async (phone) => {
             {
                 method: 'GET',
                 headers: {
-                    'Authorization': 'Bearer _bRSdfALKVbionFG3jFi_L4JV5e8M68s',
+                    'Authorization': `Bearer ${process.env.ADMIN_TOKEN}`,
                     'Content-Type': 'application/json'
                 }
             }
@@ -113,7 +113,7 @@ app.post('/wa', authenticateBearer, async (req, res) => {
             {
                 method: 'GET',
                 headers: {
-                    'Authorization': 'Bearer _bRSdfALKVbionFG3jFi_L4JV5e8M68s',
+                    'Authorization': `Bearer ${process.env.ADMIN_TOKEN}`,
                     'Content-Type': 'application/json'
                 }
             }
@@ -127,7 +127,7 @@ app.post('/wa', authenticateBearer, async (req, res) => {
 
                 return res
                     .status(200)
-                    .json(dataNotFound(JSON.stringify(response)))
+                    .json(dataNotFound('Ji'))
         }
 
         const strMessage = (
