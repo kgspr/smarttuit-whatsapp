@@ -178,7 +178,10 @@ app.post('/wa', authenticateBearer, async (req, res) => {
 
         if (strMessage.includes('cmd_pay_account_')) {
             const accountId = strMessage.replace('cmd_pay_account_', '')
-            const students = await studentData(to, accountId)
+            const _students = await studentData(to, accountId)
+            const students = _students.filter(
+  (s) => s.account === accountId
+);
 
             if (!students || !students.length) {
                 return res
