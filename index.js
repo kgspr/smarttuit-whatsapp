@@ -202,16 +202,7 @@ app.post('/wa', authenticateBearer, async (req, res) => {
         const message = messages[0] || null
         if (!message) return res.status(200).json(withHome("Something went wrong!"));
 
-        if (
-  message.type === "document" &&
-  message.document.mime_type !== "application/pdf"
-) {
-  return res.status(200).json(
-    withHome("Please upload a PDF or image of receipt.")
-  );
-}
-
-  if (message.type === "image" || message.type === "document") {
+  if (message.type === "image") {
             try {
                 const response = await fetch(
                     `https://lms.eu1.storap.com/items/ipg_requests?filter[phone][_eq]=${to}&fields=id,account&sort=-date_created&limit=1`,
