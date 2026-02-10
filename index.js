@@ -120,6 +120,8 @@ app.post('/wa', authenticateBearer, async (req, res) => {
                     }
                 )
 
+                const ipgData = await response.json()
+
                 if (!response.ok) {
                     return res
                         .status(200)
@@ -128,7 +130,7 @@ app.post('/wa', authenticateBearer, async (req, res) => {
 
                 return res
                     .status(200)
-                    .json(withHome(to + response.body.length + response.body?.data?.[0]?.id))
+                    .json(withHome(to + ipgData.length + ipgData?.data?.[0]?.id))
             } catch {
                 return res
                     .status(200)
