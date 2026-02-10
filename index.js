@@ -219,17 +219,21 @@ app.post('/wa', authenticateBearer, async (req, res) => {
                     body: '{"account":51}'
                 };
 
-                // await fetch('https://lms.eu1.storap.com/files/d248ab87-902a-42f1-8eeb-e3a317a5262d', options)
-                // .then((resImg) => {
-                //     return res
-                //     .status(200)
-                //     .json(resImg)
-                // })
-                //     .catch(err => {
-                //         return res
-                //             .status(200)
-                //             .json(withHome("Something went wrong!"))
-                //     });
+                const controller = new AbortController();
+
+setTimeout(() => controller.abort(), 30_000);
+
+                await fetch('https://lms.eu1.storap.com/files/d248ab87-902a-42f1-8eeb-e3a317a5262d', options)
+                .then((resImg) => {
+                    return res
+                    .status(200)
+                    .json(resImg)
+                })
+                    .catch(err => {
+                        return res
+                            .status(200)
+                            .json(withHome("Something went wrong!"))
+                    });
 
                 return res
                     .status(200)
