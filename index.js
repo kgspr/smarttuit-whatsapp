@@ -495,6 +495,10 @@ function sha256(source) {
         .digest("hex");
 }
 
+app.get('/health', async (req, res) => {
+    return res.status(200).json({ "status": true });
+})
+
 app.post('/sha256', async (req, res) => {
     const { source } = req.body
     return res.status(200).json({ "sha256": sha256(source) });
