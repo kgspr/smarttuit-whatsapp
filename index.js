@@ -299,7 +299,7 @@ app.post('/wa', authenticateBearer, async (req, res) => {
                 interactive: {
                     type: "button",
                     body: {
-                        text: `👇 Your Payment Link Ready\n\napp.smarttuit.com/portal/pay/init/${student?.student_id}/${student?.token}\n\nමෙම ලින්ක් එක හරහා ඔබට ගෙවීමට ඇති හිග ගාස්තු පරීක්ෂා කර තෝරන්න. පසුව ගෙවීම Digital Payment Method එකක් හරහා ගෙවීම සිදු කරන්න.‍\n\n ගැටලුවක​දී සහාය සදහා අමතන්​න\n076 025 8100.`
+                        text: `Your Payment Link Ready 👇\n\napp.smarttuit.com/portal/pay/init/${student?.student_id}/${student?.token}\n\nමෙම ලින්ක් එක හරහා ඔබට ගෙවීමට ඇති හිග ගාස්තු පරීක්ෂා කර තෝරන්න. පසුව ගෙවීම Digital Payment Method එකක් හරහා ගෙවීම සිදු කරන්න.‍\n\n ගැටලුවක​දී සහාය සදහා අමතන්​න\n076 025 8100.`
                     },
                     action: {
                         buttons: [
@@ -332,7 +332,7 @@ app.post('/wa', authenticateBearer, async (req, res) => {
                 interactive: {
                     type: "button",
                     body: {
-                        text: "Select Institute or Teacher\n👇 ආයතනය හෝ ගුරුවරයාව තෝරන්​න"
+                        text: "Select Institute or Teacher\nආයතනය හෝ ගුරුවරයාව තෝරන්​න 👇"
                     },
                     action: {
                         buttons: [
@@ -379,7 +379,7 @@ app.post('/wa', authenticateBearer, async (req, res) => {
                 interactive: {
                     type: "button",
                     body: {
-                        text: "Select Student\n👇 ළමයාව තෝරන්න."
+                        text: "Select Student\nළමයාව තෝරන්න 👇"
                     },
                     action: {
                         buttons: [
