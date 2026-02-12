@@ -80,7 +80,7 @@ async function uploadToDirectus(file, accountId) {
 
     const json = await res.json();
 
-    return json; // ← Directus file ID
+    return json.data.id; // ← Directus file ID
 }
 
 async function attachReceipt(itemId, fileId) {
@@ -163,7 +163,7 @@ const zoomMeetingData = async (phone) => {
     } catch (err) {
         return res
             .status(200)
-            .json(withHome("Something went wrong!1"))
+            .json(withHome("Something went wrong!"))
     }
 }
 
@@ -200,7 +200,7 @@ app.post('/wa', authenticateBearer, async (req, res) => {
         }
 
         const message = messages[0] || null
-        if (!message) return res.status(200).json(withHome("Something went wrong!2"));
+        if (!message) return res.status(200).json(withHome("Something went wrong!"));
 
         if (message.type === "image") {
             try {
@@ -225,20 +225,16 @@ app.post('/wa', authenticateBearer, async (req, res) => {
 
                 const ipgData = await response.json()
 
-                if (!response.ok) return res.status(200).json(withHome("Something went wrong!3"));
-          
+                if (!response.ok) return res.status(200).json(withHome("Something went wrong!"));
+
                 if (ipgData?.data?.[0]?.id) {
 
                     const ipgRequestId = ipgData?.data?.[0]?.id || null
                     const accountId = ipgData?.data?.[0]?.account || null
-                    if (!ipgRequestId || !accountId) return res.status(200).json(withHome("Something went wrong!4"));
+                    if (!ipgRequestId || !accountId) return res.status(200).json(withHome("Something went wrong!"));
 
                     const file = await downloadWhatsAppMedia(message);
                     const fileId = await uploadToDirectus(file, accountId);
-                    
-                      return res
-                        .status(200)
-                        .json(withHome(JSON.stringify(fileId)))
                     await attachReceipt(ipgRequestId, fileId);
 
                     return res
@@ -273,10 +269,10 @@ app.post('/wa', authenticateBearer, async (req, res) => {
                         }
                     })
                 }
-            } catch(e) {
+            } catch {
                 return res
                     .status(200)
-                    .json(withHome("Something went wrong!" + e.message))
+                    .json(withHome("Something went wrong!"))
             }
         }
 
