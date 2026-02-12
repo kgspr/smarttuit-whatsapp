@@ -163,7 +163,7 @@ const zoomMeetingData = async (phone) => {
     } catch (err) {
         return res
             .status(200)
-            .json(withHome("Something went wrong!"))
+            .json(withHome("Something went wrong!1"))
     }
 }
 
@@ -200,7 +200,7 @@ app.post('/wa', authenticateBearer, async (req, res) => {
         }
 
         const message = messages[0] || null
-        if (!message) return res.status(200).json(withHome("Something went wrong!"));
+        if (!message) return res.status(200).json(withHome("Something went wrong!2"));
 
         if (message.type === "image") {
             try {
@@ -225,13 +225,13 @@ app.post('/wa', authenticateBearer, async (req, res) => {
 
                 const ipgData = await response.json()
 
-                if (!response.ok) return res.status(200).json(withHome("Something went wrong!"));
+                if (!response.ok) return res.status(200).json(withHome("Something went wrong!3"));
 
                 if (ipgData?.data?.[0]?.id) {
 
                     const ipgRequestId = ipgData?.data?.[0]?.id || null
                     const accountId = ipgData?.data?.[0]?.account || null
-                    if (!ipgRequestId || !accountId) return res.status(200).json(withHome("Something went wrong!"));
+                    if (!ipgRequestId || !accountId) return res.status(200).json(withHome("Something went wrong!4"));
 
                     const file = await downloadWhatsAppMedia(message);
                     const fileId = await uploadToDirectus(file, accountId);
@@ -239,7 +239,7 @@ app.post('/wa', authenticateBearer, async (req, res) => {
 
                     return res
                         .status(200)
-                        .json(withHome(fileId))
+                        .json(withHome(`‍Receipt පත ලැබුනා ✅. ඔබගේ ගෙවීම තහවුරු කිරීමෙන් පසු​ව SMS එකක් ලැබෙනු ඇත.\n\nරිසිට් පත් අංකය: ${fileId}\nගනුදෙනු අංකය: ${ipgRequestId}`))
                 } else {
                     return res.status(200).json({
                         type: "interactive",
@@ -269,10 +269,10 @@ app.post('/wa', authenticateBearer, async (req, res) => {
                         }
                     })
                 }
-            } catch {
+            } catch(e) {
                 return res
                     .status(200)
-                    .json(withHome("Something went wrong!"))
+                    .json(withHome("Something went wrong!" + e.message))
             }
         }
 
@@ -299,7 +299,7 @@ app.post('/wa', authenticateBearer, async (req, res) => {
                 interactive: {
                     type: "button",
                     body: {
-                        text: `app.smarttuit.com/portal/pay/init/${student?.student_id}/${student?.token}`
+                        text: `Your Payment Link Ready 👇\n\napp.smarttuit.com/portal/pay/init/${student?.student_id}/${student?.token}\n\nමෙම ලින්ක් එක හරහා ඔබට ගෙවීමට ඇති හිග ගාස්තු පරීක්ෂා කර තෝරන්න. පසුව ගෙවීම Digital Payment Method එකක් හරහා ගෙවීම සිදු කරන්න.‍\n\n ගැටලුවක​දී සහාය සදහා අමතන්​න\n076 025 8100.`
                     },
                     action: {
                         buttons: [
@@ -332,7 +332,7 @@ app.post('/wa', authenticateBearer, async (req, res) => {
                 interactive: {
                     type: "button",
                     body: {
-                        text: "Select"
+                        text: "Select Institute or Teacher\nආයතනය හෝ ගුරුවරයාව තෝරන්​න 👇"
                     },
                     action: {
                         buttons: [
@@ -379,7 +379,7 @@ app.post('/wa', authenticateBearer, async (req, res) => {
                 interactive: {
                     type: "button",
                     body: {
-                        text: "Select"
+                        text: "Select Student\nළමයාව තෝරන්න 👇"
                     },
                     action: {
                         buttons: [
