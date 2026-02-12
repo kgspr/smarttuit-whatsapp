@@ -163,7 +163,7 @@ const zoomMeetingData = async (phone) => {
     } catch (err) {
         return res
             .status(200)
-            .json(withHome("Something went wrong!"))
+            .json(withHome("Something went wrong!1"))
     }
 }
 
@@ -200,7 +200,7 @@ app.post('/wa', authenticateBearer, async (req, res) => {
         }
 
         const message = messages[0] || null
-        if (!message) return res.status(200).json(withHome("Something went wrong!"));
+        if (!message) return res.status(200).json(withHome("Something went wrong!2"));
 
         if (message.type === "image") {
             try {
@@ -225,13 +225,13 @@ app.post('/wa', authenticateBearer, async (req, res) => {
 
                 const ipgData = await response.json()
 
-                if (!response.ok) return res.status(200).json(withHome("Something went wrong!"));
+                if (!response.ok) return res.status(200).json(withHome("Something went wrong!3"));
 
                 if (ipgData?.data?.[0]?.id) {
 
                     const ipgRequestId = ipgData?.data?.[0]?.id || null
                     const accountId = ipgData?.data?.[0]?.account || null
-                    if (!ipgRequestId || !accountId) return res.status(200).json(withHome("Something went wrong!"));
+                    if (!ipgRequestId || !accountId) return res.status(200).json(withHome("Something went wrong!4"));
 
                     const file = await downloadWhatsAppMedia(message);
                     const fileId = await uploadToDirectus(file, accountId);
@@ -272,7 +272,7 @@ app.post('/wa', authenticateBearer, async (req, res) => {
             } catch {
                 return res
                     .status(200)
-                    .json(withHome("Something went wrong!"))
+                    .json(withHome("Something went wrong!5"))
             }
         }
 
