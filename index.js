@@ -332,7 +332,7 @@ app.post('/wa', authenticateBearer, async (req, res) => {
                 interactive: {
                     type: "button",
                     body: {
-                        text: "Select Institute or Teacher\nආයතනය හෝ ගුරුවරයාව තෝරන්​න 👇"
+                        text: "Select Student\nළමයාව තෝරන්න 👇"
                     },
                     action: {
                         buttons: [
@@ -379,7 +379,7 @@ app.post('/wa', authenticateBearer, async (req, res) => {
                 interactive: {
                     type: "button",
                     body: {
-                        text: "Select Student\nළමයාව තෝරන්න 👇"
+                        text: "Select Institute or Teacher\nආයතනය හෝ ගුරුවරයාව තෝරන්​න 👇"
                     },
                     action: {
                         buttons: [
