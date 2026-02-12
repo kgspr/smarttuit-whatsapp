@@ -239,7 +239,7 @@ app.post('/wa', authenticateBearer, async (req, res) => {
 
                     return res
                         .status(200)
-                        .json(withHome(fileId))
+                        .json(withHome(`‍Receipt පත ලැබුනා ✅. ඔබගේ ගෙවීම තහවුරු කිරීමෙන් පසු​ව SMS එකක් ලැබෙනු ඇත.\n\nරිසිට් පත් අංකය: ${fileId}\nගනුදෙනු අංකය: ${ipgRequestId}`))
                 } else {
                     return res.status(200).json({
                         type: "interactive",
@@ -299,7 +299,7 @@ app.post('/wa', authenticateBearer, async (req, res) => {
                 interactive: {
                     type: "button",
                     body: {
-                        text: `app.smarttuit.com/portal/pay/init/${student?.student_id}/${student?.token}`
+                        text: `👇 Your Payment Link Ready\n\napp.smarttuit.com/portal/pay/init/${student?.student_id}/${student?.token}\n\nමෙම ලින්ක් එක හරහා ඔබට ගෙවීමට ඇති හිග ගාස්තු පරීක්ෂා කර තෝරන්න. පසුව ගෙවීම Digital Payment Method එකක් හරහා ගෙවීම සිදු කරන්න.‍\n\n ගැටලුවක​දී සහාය සදහා අමතන්​න 076 025 8100.`
                     },
                     action: {
                         buttons: [
@@ -332,7 +332,7 @@ app.post('/wa', authenticateBearer, async (req, res) => {
                 interactive: {
                     type: "button",
                     body: {
-                        text: "Select"
+                        text: "Select Institute or Teacher\nආයතනය හෝ ගුරුවරයාව තෝරන්​න"
                     },
                     action: {
                         buttons: [
@@ -379,7 +379,7 @@ app.post('/wa', authenticateBearer, async (req, res) => {
                 interactive: {
                     type: "button",
                     body: {
-                        text: "Select"
+                        text: "Select Student\nළමයාව තෝරන්න."
                     },
                     action: {
                         buttons: [
