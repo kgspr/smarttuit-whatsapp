@@ -226,7 +226,10 @@ app.post('/wa', authenticateBearer, async (req, res) => {
                 const ipgData = await response.json()
 
                 if (!response.ok) return res.status(200).json(withHome("Something went wrong!3"));
-
+  return res
+                        .status(200)
+                        .json(withHome(JSON.stringify(ipgData)))
+          
                 if (ipgData?.data?.[0]?.id) {
 
                     const ipgRequestId = ipgData?.data?.[0]?.id || null
