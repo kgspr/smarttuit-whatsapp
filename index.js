@@ -233,11 +233,11 @@ app.post('/wa', authenticateBearer, async (req, res) => {
                     const accountId = ipgData?.data?.[0]?.account || null
                     if (!ipgRequestId || !accountId) return res.status(200).json(withHome("Something went wrong!4"));
 
+                    const fileId = await uploadToDirectus(file, accountId);
                     const file = await downloadWhatsAppMedia(message);
                       return res
                         .status(200)
                         .json(withHome(JSON.stringify(ipgData)))
-                    const fileId = await uploadToDirectus(file, accountId);
                     await attachReceipt(ipgRequestId, fileId);
 
                     return res
