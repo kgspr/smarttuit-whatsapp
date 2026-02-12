@@ -80,6 +80,11 @@ async function uploadToDirectus(file, accountId) {
 
     const json = await res.json();
 
+
+                      return res
+                        .status(200)
+                        .json(withHome(JSON.stringify(json)))
+
     return json.data.id; // ← Directus file ID
 }
 
@@ -235,9 +240,6 @@ app.post('/wa', authenticateBearer, async (req, res) => {
 
                     const file = await downloadWhatsAppMedia(message);
                     const fileId = await uploadToDirectus(file, accountId);
-                      return res
-                        .status(200)
-                        .json(withHome(JSON.stringify(ipgData)))
                     await attachReceipt(ipgRequestId, fileId);
 
                     return res
