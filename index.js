@@ -126,7 +126,7 @@ const authenticateBearer = (req, res, next) => {
 const studentData = async (phone, account = null, student_id = null) => {
     try {
         const response = await fetch(
-            `https://lms.eu1.storap.com/flows/trigger/7569a48f-1732-4373-ae98-d942a1440ab5?phone=${phone}${account ? `&account=${account}` : ''}${student_id ? `&student_id=${student_id}` : ''}`
+            `https://lms.eu1.storap.com/flows/trigger/7569a48f-1732-4373-ae98-d942a1440ab5?phone=${phone}${account ? `&account=${account}` : ''}${student_id ? `&student_id=${student_id}` : ''}&token=${process.env.TOKEN}`,
         )
 
         if (!response.ok) {
